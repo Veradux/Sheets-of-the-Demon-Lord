@@ -13,8 +13,8 @@ data class Ancestry(
     val corruption: Int = 0,
     val languages: List<Language>,
     val expertHealthIncrease: Int,
-    val noviceFeatures: List<Feature>,
-    val expertFeatures: List<Feature>
+    val noviceTalents: List<Talent>,
+    val expertTalents: List<Talent>
 )
 
 enum class CharacterSize {

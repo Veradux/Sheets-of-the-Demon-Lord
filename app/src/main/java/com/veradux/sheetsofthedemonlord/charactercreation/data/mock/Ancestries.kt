@@ -1,13 +1,13 @@
-package com.veradux.sheetsofthedemonlord.charactercreation.data.mockdata
+package com.veradux.sheetsofthedemonlord.charactercreation.data.mock
 
 import com.veradux.sheetsofthedemonlord.charactercreation.model.Ancestry
 import com.veradux.sheetsofthedemonlord.charactercreation.model.AttributeScores
 import com.veradux.sheetsofthedemonlord.charactercreation.model.CharacterSize
-import com.veradux.sheetsofthedemonlord.charactercreation.model.Feature
+import com.veradux.sheetsofthedemonlord.charactercreation.model.Talent
 import com.veradux.sheetsofthedemonlord.charactercreation.model.Language
 
-// region generic features
-object Shadowsight : Feature.Detailed(
+// region generic talents
+object Shadowsight : Talent.Detailed(
     name = "Shadowsight",
     description = "You see in areas obscured by shadows as if those areas were lit."
 )
@@ -20,21 +20,21 @@ val human = Ancestry(
     speed = 10,
     languages = listOf(Language.CommonTongue),
     expertHealthIncrease = 5,
-    noviceFeatures = listOf(
-        Feature.Basic.IncreaseAttributeScoreBy1,
-        Feature.Detailed(
+    noviceTalents = listOf(
+        Talent.Basic.IncreaseAttributeScoreBy1,
+        Talent.Detailed(
             name = "Language and Professions",
             description = "You speak the Common Tongue, and you can either speak one additional language or add a random profession.",
-            choiceOptions = listOf(Feature.Basic.AddALanguage, Feature.Basic.AddAProfession)
+            choiceOptions = listOf(Talent.Basic.AddALanguage, Talent.Basic.AddAProfession)
         )
     ),
-    expertFeatures = listOf(
-        Feature.Detailed(
+    expertTalents = listOf(
+        Talent.Detailed(
             name = "Characteristics",
             description = "You either learn one spell or gain Determined.",
             choiceOptions = listOf(
-                Feature.Basic.LearnASpell,
-                Feature.Detailed(
+                Talent.Basic.LearnASpell,
+                Talent.Detailed(
                     name = "Determined",
                     description = "When you roll a 1 on the die from a boon, you can reroll the die and choose to use the new number."
                 )
@@ -51,28 +51,28 @@ val goblin = Ancestry(
     speed = 10,
     expertHealthIncrease = 4,
     languages = listOf(Language.CommonTongue, Language.Elvish),
-    noviceFeatures = listOf(
-        Feature.Detailed(
+    noviceTalents = listOf(
+        Talent.Detailed(
             name = "Immune",
             description = "damage from disease; charmed, diseased"
         ),
-        Feature.Detailed(
+        Talent.Detailed(
             name = "Iron Vulnerability",
             description = "You are impaired while you are in contact with iron."
         ),
         Shadowsight,
-        Feature.Detailed(
+        Talent.Detailed(
             name = "Sneaky",
             description = "When you roll to become hidden or move silently, you make the Agility challenge roll with 1 boon."
         )
     ),
-    expertFeatures = listOf(
-        Feature.Detailed(
+    expertTalents = listOf(
+        Talent.Detailed(
             name = "Characteristics",
             description = "You either learn one spell or gain Cunning Escape.",
             choiceOptions = listOf(
-                Feature.Basic.LearnASpell,
-                Feature.Detailed(
+                Talent.Basic.LearnASpell,
+                Talent.Detailed(
                     name = "Spring Away",
                     description = "When a creature you can see gets a failure on an attack roll against your Defense or Agility, you can use a triggered action to retreat."
                 )

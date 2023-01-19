@@ -1,8 +1,8 @@
 package com.veradux.sheetsofthedemonlord.charactercreation.model
 
-sealed interface Feature {
+sealed interface Talent {
 
-    enum class Basic : Feature {
+    enum class Basic : Talent {
         AddALanguage,
         AddAProfession,
         LearnASpell,
@@ -13,6 +13,6 @@ sealed interface Feature {
     open class Detailed(
         val name: String,
         val description: String,
-        val choiceOptions: List<Feature>? = null
-    ) : Feature
+        val choiceOptions: List<Talent>? = null
+    ) : Talent
 }
