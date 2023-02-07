@@ -6,36 +6,38 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.veradux.sheetsofthedemonlord.characters.data.mock.CharactersApiMock
+import com.veradux.sheetsofthedemonlord.characters.presentation.CharacterList
 import com.veradux.sheetsofthedemonlord.ui.theme.SheetsOfTheDemonLordTheme
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             SheetsOfTheDemonLordTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    Greeting("Android")
-
+                    // TODO figure out how to use view models and APIs
+                    val api = CharactersApiMock()
+                    CharacterList(characters = api.getCharacters())
                 }
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     SheetsOfTheDemonLordTheme {
-        Greeting("Android")
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+            // TODO figure out how to use view models and APIs
+            val api = CharactersApiMock()
+            CharacterList(characters = api.getCharacters())
+        }
     }
 }
