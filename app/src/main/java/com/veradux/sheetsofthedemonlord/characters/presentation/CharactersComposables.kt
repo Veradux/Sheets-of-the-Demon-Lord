@@ -19,16 +19,15 @@ import androidx.compose.ui.unit.dp
 import com.veradux.sheetsofthedemonlord.R
 import com.veradux.sheetsofthedemonlord.characters.model.DemonLordCharacter
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CharacterCard(character: DemonLordCharacter) {
 
     Card(shape = RoundedCornerShape(4.dp), modifier = Modifier.padding(8.dp)) {
 
         ListItem(
-            headlineText = { Text(text = character.name) },
+            headlineContent = { Text(text = character.name) },
             // TODO localization
-            supportingText = { Text(text = with(character) { "Level $level $ancestryName\n$novicePath" }) },
+            supportingContent = { Text(text = with(character) { "Level $level $ancestryName\n$novicePath" }) },
             leadingContent = {
                 Image(
                     // TODO add image impl
