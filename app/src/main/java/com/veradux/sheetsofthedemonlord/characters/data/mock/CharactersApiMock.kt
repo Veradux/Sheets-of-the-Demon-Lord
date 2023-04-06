@@ -11,6 +11,21 @@ class CharactersApiMock : CharactersApi {
             DemonLordCharacter(name = "Sock", level = 1, ancestryName = "Goblin", novicePath = NovicePath.Rogue),
             DemonLordCharacter(name = "Icathus", level = 1, ancestryName = "Human", novicePath = NovicePath.Magician),
             DemonLordCharacter(name = "Krush", level = 10, ancestryName = "Orc", novicePath = NovicePath.Warrior),
+            DemonLordCharacter(name = "Sock", level = 1, ancestryName = "Goblin", novicePath = NovicePath.Rogue),
+            DemonLordCharacter(name = "Icathus", level = 1, ancestryName = "Human", novicePath = NovicePath.Magician),
+            DemonLordCharacter(name = "Krush", level = 10, ancestryName = "Orc", novicePath = NovicePath.Warrior),
+            DemonLordCharacter(name = "Sock", level = 1, ancestryName = "Goblin", novicePath = NovicePath.Rogue),
+            DemonLordCharacter(name = "Icathus", level = 1, ancestryName = "Human", novicePath = NovicePath.Magician),
+            DemonLordCharacter(name = "Krush", level = 10, ancestryName = "Orc", novicePath = NovicePath.Warrior),
+            DemonLordCharacter(name = "Sock", level = 1, ancestryName = "Goblin", novicePath = NovicePath.Rogue),
+            DemonLordCharacter(name = "Icathus", level = 1, ancestryName = "Human", novicePath = NovicePath.Magician),
+            DemonLordCharacter(name = "Krush", level = 10, ancestryName = "Orc", novicePath = NovicePath.Warrior),
+            DemonLordCharacter(name = "Sock", level = 1, ancestryName = "Goblin", novicePath = NovicePath.Rogue),
+            DemonLordCharacter(name = "Icathus", level = 1, ancestryName = "Human", novicePath = NovicePath.Magician),
+            DemonLordCharacter(name = "Krush", level = 10, ancestryName = "Orc", novicePath = NovicePath.Warrior),
+            DemonLordCharacter(name = "Sock", level = 1, ancestryName = "Goblin", novicePath = NovicePath.Rogue),
+            DemonLordCharacter(name = "Icathus", level = 1, ancestryName = "Human", novicePath = NovicePath.Magician),
+            DemonLordCharacter(name = "Krush", level = 10, ancestryName = "Orc", novicePath = NovicePath.Warrior),
         )
     }
 }
