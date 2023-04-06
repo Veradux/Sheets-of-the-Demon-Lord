@@ -51,18 +51,26 @@ fun CharacterCard(character: DemonLordCharacter) {
                 Box(
                     Modifier
                         .matchParentSize()
-                        .background(Brush.verticalGradient(listOf(Color.Transparent, Color.Transparent, Color.Black)))
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(
+                                    Color.Transparent,
+                                    Color.Black.copy(alpha = 0.4f),
+                                    Color.Black.copy(alpha = 0.8f)
+                                )
+                            )
+                        )
                 )
-                // This text is always white, regardless of theme, because it is on top of an image.
+                // This text is always white, regardless of theme, 
+                //  because it is on top of an image and needs guaranteed high contrast.
                 Text(
                     text = character.name,
                     fontSize = 32.sp,
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(12.dp)
+                        .padding(8.dp)
                         .align(Alignment.BottomStart)
-
                 )
             }
             Text(
