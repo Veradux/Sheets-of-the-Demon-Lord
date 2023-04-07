@@ -90,7 +90,7 @@ fun CharacterList(characters: List<DemonLordCharacter>) {
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 fun DefaultPreview() {
     SheetsOfTheDemonLordTheme {
