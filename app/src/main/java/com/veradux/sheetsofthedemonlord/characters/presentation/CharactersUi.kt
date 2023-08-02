@@ -6,14 +6,19 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Card
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,13 +32,38 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.veradux.sheetsofthedemonlord.characters.data.mock.CharactersApiMock
 import com.veradux.sheetsofthedemonlord.characters.model.DemonLordCharacter
+import com.veradux.sheetsofthedemonlord.ui.navigation.CharacterSheetScreens
 import com.veradux.sheetsofthedemonlord.ui.theme.SheetsOfTheDemonLordTheme
 
 @Composable
-fun CharacterCard(character: DemonLordCharacter) {
+fun CharactersListScreen(navigation: NavController) {
+    Scaffold(
+        floatingActionButtonPosition = FabPosition.End,
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { navigation.navigate(CharacterSheetScreens.CharacterCreation.name) },
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Add,
+                    contentDescription = "Add Character Sheet",
+                )
+            }
+        }
+    ) { paddingValues ->
+        Surface(modifier = Modifier.padding(paddingValues), color = MaterialTheme.colorScheme.background) {
+            // TODO figure out how to use view models and APIs
+            val api = CharactersApiMock()
+            CharacterList(characters = api.getCharacters())
+        }
+    }
+}
 
+@Composable
+fun CharacterCard(character: DemonLordCharacter) {
     Card(
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
@@ -94,11 +124,7 @@ fun CharacterList(characters: List<DemonLordCharacter>) {
 @Composable
 fun DefaultPreview() {
     SheetsOfTheDemonLordTheme {
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            // TODO figure out how to use view models and APIs
-            val api = CharactersApiMock()
-            CharacterList(characters = api.getCharacters())
-        }
+        val navController = rememberNavController()
+        CharactersListScreen(navController)
     }
 }
-

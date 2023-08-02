@@ -3,20 +3,13 @@ package com.veradux.sheetsofthedemonlord
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import com.veradux.sheetsofthedemonlord.characters.data.mock.CharactersApiMock
-import com.veradux.sheetsofthedemonlord.characters.presentation.CharacterList
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.veradux.sheetsofthedemonlord.characters.presentation.CharactersListScreen
+import com.veradux.sheetsofthedemonlord.ui.navigation.CharacterSheetScreens
 import com.veradux.sheetsofthedemonlord.ui.theme.SheetsOfTheDemonLordTheme
 
 class MainActivity : ComponentActivity() {
@@ -25,32 +18,28 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
+            val navController = rememberNavController()
             SheetsOfTheDemonLordTheme {
-                Scaffold(
-                    floatingActionButtonPosition = FabPosition.End,
-                    floatingActionButton = {
-                        FloatingActionButton(
-                            onClick = { /* OnClick Method */ },
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Add,
-                                contentDescription = "Add Character Sheet",
-                            )
-                        }
-                    }
-                ) {
-                    CharactersList(it)
-                }
+                MainMenuNavHost(navController)
             }
         }
     }
 }
 
 @Composable
-fun CharactersList(paddingValues: PaddingValues) {
-    Surface(modifier = Modifier.padding(paddingValues), color = MaterialTheme.colorScheme.background) {
-        // TODO figure out how to use view models and APIs
-        val api = CharactersApiMock()
-        CharacterList(characters = api.getCharacters())
+fun MainMenuNavHost(navController: NavHostController) {
+    NavHost(
+        navController = navController,
+        startDestination = CharacterSheetScreens.CharacterList.name,
+    ) {
+        composable(route = CharacterSheetScreens.CharacterList.name) {
+            CharactersListScreen(navController)
+        }
+        composable(route = CharacterSheetScreens.CharacterCreation.name) {
+            // TODO add creation screen
+        }
+        composable(route = CharacterSheetScreens.CharacterSheet.name) {
+            // TODO add sheet screen
+        }
     }
 }
