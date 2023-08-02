@@ -32,20 +32,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.veradux.sheetsofthedemonlord.characters.data.mock.CharactersApiMock
 import com.veradux.sheetsofthedemonlord.characters.model.DemonLordCharacter
-import com.veradux.sheetsofthedemonlord.ui.navigation.CharacterSheetScreens
 import com.veradux.sheetsofthedemonlord.ui.theme.SheetsOfTheDemonLordTheme
 
 @Composable
-fun CharactersListScreen(navigation: NavController) {
+fun CharactersListScreen(
+    onNewCharacterButtonClicked: () -> Unit,
+    onCharacterSelectedButtonClicked: (DemonLordCharacter) -> Unit
+) {
     Scaffold(
         floatingActionButtonPosition = FabPosition.End,
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navigation.navigate(CharacterSheetScreens.CharacterCreation.name) },
+                onClick = { onNewCharacterButtonClicked() },
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Add,
@@ -57,18 +58,18 @@ fun CharactersListScreen(navigation: NavController) {
         Surface(modifier = Modifier.padding(paddingValues), color = MaterialTheme.colorScheme.background) {
             // TODO figure out how to use view models and APIs
             val api = CharactersApiMock()
-            CharacterList(characters = api.getCharacters())
+            CharacterList(onCharacterSelectedButtonClicked, api.getCharacters())
         }
     }
 }
 
 @Composable
-fun CharacterCard(character: DemonLordCharacter) {
+fun CharacterCard(onCharacterSelectedButtonClicked: (DemonLordCharacter) -> Unit, character: DemonLordCharacter) {
     Card(
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
             .padding(horizontal = 24.dp, vertical = 12.dp)
-            .clickable { /* move to sheet screen */ }) {
+            .clickable { onCharacterSelectedButtonClicked(character) }) {
         Column {
             Box {
                 Image(
@@ -112,10 +113,13 @@ fun CharacterCard(character: DemonLordCharacter) {
 }
 
 @Composable
-fun CharacterList(characters: List<DemonLordCharacter>) {
+fun CharacterList(
+    onCharacterSelectedButtonClicked: (DemonLordCharacter) -> Unit,
+    characters: List<DemonLordCharacter>
+) {
     LazyColumn(modifier = Modifier.fillMaxHeight()) {
         items(characters) { character ->
-            CharacterCard(character = character)
+            CharacterCard(onCharacterSelectedButtonClicked, character)
         }
     }
 }
@@ -125,6 +129,7 @@ fun CharacterList(characters: List<DemonLordCharacter>) {
 fun DefaultPreview() {
     SheetsOfTheDemonLordTheme {
         val navController = rememberNavController()
-        CharactersListScreen(navController)
+        // todo fix later
+//        CharactersListScreen(navController)
     }
 }
