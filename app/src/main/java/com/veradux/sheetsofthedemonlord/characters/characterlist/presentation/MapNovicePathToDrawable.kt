@@ -1,7 +1,7 @@
-package com.veradux.sheetsofthedemonlord.characters.presentation
+package com.veradux.sheetsofthedemonlord.characters.characterlist.presentation
 
 import com.veradux.sheetsofthedemonlord.R
-import com.veradux.sheetsofthedemonlord.characters.model.NovicePath
+import com.veradux.sheetsofthedemonlord.characters.characterlist.model.NovicePath
 
 // This extension is in its own file because there are many other paths to be added.
 //  The list is expected to be very long.

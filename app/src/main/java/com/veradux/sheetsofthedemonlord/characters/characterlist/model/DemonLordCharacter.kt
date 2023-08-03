@@ -1,4 +1,4 @@
-package com.veradux.sheetsofthedemonlord.characters.model
+package com.veradux.sheetsofthedemonlord.characters.characterlist.model
 
 data class DemonLordCharacter(
     val name: String,

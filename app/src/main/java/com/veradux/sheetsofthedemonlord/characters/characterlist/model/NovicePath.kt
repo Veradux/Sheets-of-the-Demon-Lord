@@ -1,4 +1,4 @@
-package com.veradux.sheetsofthedemonlord.characters.model
+package com.veradux.sheetsofthedemonlord.characters.characterlist.model
 
 enum class NovicePath {
     Rogue,

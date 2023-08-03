@@ -1,8 +1,8 @@
-package com.veradux.sheetsofthedemonlord.characters.data.mock
+package com.veradux.sheetsofthedemonlord.characters.characterlist.data.mock
 
-import com.veradux.sheetsofthedemonlord.characters.data.CharactersApi
-import com.veradux.sheetsofthedemonlord.characters.model.DemonLordCharacter
-import com.veradux.sheetsofthedemonlord.characters.model.NovicePath
+import com.veradux.sheetsofthedemonlord.characters.characterlist.data.CharactersApi
+import com.veradux.sheetsofthedemonlord.characters.characterlist.model.DemonLordCharacter
+import com.veradux.sheetsofthedemonlord.characters.characterlist.model.NovicePath
 
 class CharactersApiMock : CharactersApi {
 

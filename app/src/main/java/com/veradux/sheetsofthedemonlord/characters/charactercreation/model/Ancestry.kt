@@ -1,6 +1,6 @@
-package com.veradux.sheetsofthedemonlord.charactercreation.model
+package com.veradux.sheetsofthedemonlord.characters.charactercreation.model
 
-import com.veradux.sheetsofthedemonlord.charactercreation.model.CharacterSize.Medium
+import com.veradux.sheetsofthedemonlord.characters.charactercreation.model.CharacterSize.Medium
 
 data class Ancestry(
     val name: String,
