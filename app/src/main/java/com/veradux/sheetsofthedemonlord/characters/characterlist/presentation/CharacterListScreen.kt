@@ -1,4 +1,4 @@
-package com.veradux.sheetsofthedemonlord.characters.presentation
+package com.veradux.sheetsofthedemonlord.characters.characterlist.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,9 +32,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
-import com.veradux.sheetsofthedemonlord.characters.data.mock.CharactersApiMock
-import com.veradux.sheetsofthedemonlord.characters.model.DemonLordCharacter
+import com.veradux.sheetsofthedemonlord.characters.characterlist.data.mock.CharactersApiMock
+import com.veradux.sheetsofthedemonlord.characters.characterlist.model.DemonLordCharacter
 import com.veradux.sheetsofthedemonlord.ui.theme.SheetsOfTheDemonLordTheme
 
 @Composable
@@ -78,7 +77,7 @@ fun CharacterCard(onCharacterSelectedButtonClicked: (DemonLordCharacter) -> Unit
                     contentDescription = "",
                     modifier = Modifier.height(112.dp)
                 )
-                // This box is a "Scrim", which darkens the image behind the text for better visibility.
+                // This box is for a "Scrim" effect, which darkens the image behind the text for better readability.
                 Box(
                     Modifier
                         .matchParentSize()
@@ -128,8 +127,6 @@ fun CharacterList(
 @Composable
 fun DefaultPreview() {
     SheetsOfTheDemonLordTheme {
-        val navController = rememberNavController()
-        // todo fix later
-//        CharactersListScreen(navController)
+        CharactersListScreen({}, {})
     }
 }
