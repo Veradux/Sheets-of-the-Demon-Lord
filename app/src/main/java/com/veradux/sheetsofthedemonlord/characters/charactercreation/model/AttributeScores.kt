@@ -1,4 +1,4 @@
-package com.veradux.sheetsofthedemonlord.charactercreation.model
+package com.veradux.sheetsofthedemonlord.characters.charactercreation.model
 
 data class AttributeScores(
     val strength: Int,

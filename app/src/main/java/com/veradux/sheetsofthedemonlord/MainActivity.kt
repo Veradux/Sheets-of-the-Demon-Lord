@@ -3,20 +3,22 @@ package com.veradux.sheetsofthedemonlord
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import com.veradux.sheetsofthedemonlord.characters.data.mock.CharactersApiMock
-import com.veradux.sheetsofthedemonlord.characters.presentation.CharacterList
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
+import androidx.navigation.compose.rememberNavController
+import com.veradux.sheetsofthedemonlord.characters.charactercreation.presentation.CharacterCreationScreen
+import com.veradux.sheetsofthedemonlord.characters.characterlist.model.DemonLordCharacter
+import com.veradux.sheetsofthedemonlord.characters.characterlist.presentation.CharactersListScreen
+import com.veradux.sheetsofthedemonlord.characters.charactersheet.presentation.CharacterSheetScreen
+import com.veradux.sheetsofthedemonlord.characters.CharactersScreens.CharacterCreation
+import com.veradux.sheetsofthedemonlord.characters.CharactersScreens.CharacterList
+import com.veradux.sheetsofthedemonlord.characters.CharactersScreens.CharacterRoute
+import com.veradux.sheetsofthedemonlord.characters.CharactersScreens.CharacterSheet
 import com.veradux.sheetsofthedemonlord.ui.theme.SheetsOfTheDemonLordTheme
 
 class MainActivity : ComponentActivity() {
@@ -25,32 +27,46 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
+            val navController = rememberNavController()
             SheetsOfTheDemonLordTheme {
-                Scaffold(
-                    floatingActionButtonPosition = FabPosition.End,
-                    floatingActionButton = {
-                        FloatingActionButton(
-                            onClick = { /* OnClick Method */ },
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Add,
-                                contentDescription = "Add Character Sheet",
-                            )
-                        }
-                    }
-                ) {
-                    CharactersList(it)
-                }
+                MainMenuNavHost(navController)
             }
         }
     }
 }
 
+// todo replace this with vm
+lateinit var demonLordCharacter: DemonLordCharacter
+
 @Composable
-fun CharactersList(paddingValues: PaddingValues) {
-    Surface(modifier = Modifier.padding(paddingValues), color = MaterialTheme.colorScheme.background) {
-        // TODO figure out how to use view models and APIs
-        val api = CharactersApiMock()
-        CharacterList(characters = api.getCharacters())
+fun MainMenuNavHost(navController: NavHostController) {
+    NavHost(
+        navController = navController,
+        startDestination = CharacterRoute.name,
+    ) {
+        characterGraph(navController)
+    }
+}
+
+fun NavGraphBuilder.characterGraph(navController: NavController) {
+    navigation(startDestination = CharacterList.name, route = CharacterRoute.name) {
+
+        composable(route = CharacterList.name) {
+            CharactersListScreen(
+                onNewCharacterButtonClicked = {
+                    navController.navigate(CharacterCreation.name)
+                }, onCharacterSelectedButtonClicked = {
+                    demonLordCharacter = it
+                    navController.navigate(CharacterSheet.name)
+                })
+        }
+
+        composable(route = CharacterCreation.name) {
+            CharacterCreationScreen()
+        }
+
+        composable(route = CharacterSheet.name) {
+            CharacterSheetScreen(demonLordCharacter)
+        }
     }
 }

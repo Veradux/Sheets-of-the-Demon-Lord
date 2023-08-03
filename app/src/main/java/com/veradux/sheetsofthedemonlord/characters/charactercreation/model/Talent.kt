@@ -1,4 +1,4 @@
-package com.veradux.sheetsofthedemonlord.charactercreation.model
+package com.veradux.sheetsofthedemonlord.characters.charactercreation.model
 
 sealed interface Talent {
 

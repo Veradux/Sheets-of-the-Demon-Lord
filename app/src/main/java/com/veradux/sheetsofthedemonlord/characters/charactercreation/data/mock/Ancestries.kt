@@ -1,10 +1,10 @@
-package com.veradux.sheetsofthedemonlord.charactercreation.data.mock
+package com.veradux.sheetsofthedemonlord.characters.charactercreation.data.mock
 
-import com.veradux.sheetsofthedemonlord.charactercreation.model.Ancestry
-import com.veradux.sheetsofthedemonlord.charactercreation.model.AttributeScores
-import com.veradux.sheetsofthedemonlord.charactercreation.model.CharacterSize
-import com.veradux.sheetsofthedemonlord.charactercreation.model.Talent
-import com.veradux.sheetsofthedemonlord.charactercreation.model.Language
+import com.veradux.sheetsofthedemonlord.characters.charactercreation.model.Ancestry
+import com.veradux.sheetsofthedemonlord.characters.charactercreation.model.AttributeScores
+import com.veradux.sheetsofthedemonlord.characters.charactercreation.model.CharacterSize
+import com.veradux.sheetsofthedemonlord.characters.charactercreation.model.Language
+import com.veradux.sheetsofthedemonlord.characters.charactercreation.model.Talent
 
 // region generic talents
 object Shadowsight : Talent.Detailed(
