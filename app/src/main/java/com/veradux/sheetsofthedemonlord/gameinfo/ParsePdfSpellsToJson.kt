@@ -7,6 +7,15 @@ import java.io.BufferedReader
 import java.io.InputStream
 import java.util.Locale
 
+// TODO exceptions in the pdf to prepare for, when putting the data on the UI:
+//  1. The chaos spell called Wild Magic has a random d20 roll table in it. It will have to be fixed manually.
+//  2. Conjuration has a snippet of rules which will be incorrectly added to the Conjure Weapon spell automatically.
+//  Instead it should be moved to the tradition description. Look for other similar cases.
+//  3. A bunch of CASE SENSITIVE keywords will need to be bolded. Such as Area, Target, Requirement, Duration,
+//  Triggered, Sacrifice, Permanence, Attack Roll 20+. Also all mentions of creatures such as 'small genie',
+//  medium monster, and medium monsters (plural), etc.
+//  4. Line separators could be added after the spell name line and after the Area, Duration, and Target lines.
+
 fun parsePdfSpellsToJson(inputStream: InputStream) {
     val plainTextLines = readInputStream(inputStream)
     logLines(plainTextLines, 1)
@@ -25,6 +34,7 @@ fun getSpellsFromLines(lines: List<String>): List<Spell> {
     val tempLines = lines.toMutableList()
     val spells = mutableListOf<Spell>()
 
+    @Suppress("KotlinConstantConditions")
     do {
         val spellTitleIndex = tempLines.indexOf(tempLines.find {
             // We are looking for the first line of each spell, it looks like this for example:
@@ -41,7 +51,7 @@ fun getSpellsFromLines(lines: List<String>): List<Spell> {
             // Additionally, we are looking for a different line than the first spell title index,
             // which naturally should be the next spell title, or the end of the file.
             it.areAllExistingCharactersUpperCase() && it.last().isDigit() && tempLines.indexOf(it) != spellTitleIndex
-        })) ?: tempLines.lastIndex
+        } ?: tempLines[tempLines.lastIndex]))
 
         val spellTitle = tempLines[spellTitleIndex]
         val splitSpellTitle = spellTitle.split(' ')
