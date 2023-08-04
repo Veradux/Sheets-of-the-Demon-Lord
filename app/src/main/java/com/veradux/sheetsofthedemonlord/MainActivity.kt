@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        convertPdfSpellsToJson(assets.open("some spells"))
+        convertPdfSpellsToJson(assets.open("text/some spells.txt"))
 
         setContent {
             val navController = rememberNavController()
