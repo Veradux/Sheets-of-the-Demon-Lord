@@ -9,7 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.veradux.sheetsofthedemonlord.characters.CharactersScreen
 import com.veradux.sheetsofthedemonlord.characters.charactersNavGraph
-import com.veradux.sheetsofthedemonlord.gameinfo.convertPdfSpellsToJson
+import com.veradux.sheetsofthedemonlord.gameinfo.parsePdfSpellsToJson
 import com.veradux.sheetsofthedemonlord.ui.theme.SheetsOfTheDemonLordTheme
 
 class MainActivity : ComponentActivity() {
@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        convertPdfSpellsToJson(assets.open("text/some spells.txt"))
+        parsePdfSpellsToJson(assets.open("text/some spells.txt"))
 
         setContent {
             val navController = rememberNavController()
