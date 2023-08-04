@@ -9,12 +9,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.veradux.sheetsofthedemonlord.characters.CharactersScreens.CharacterRoute
 import com.veradux.sheetsofthedemonlord.characters.charactersGraph
+import com.veradux.sheetsofthedemonlord.gameinfo.convertPdfSpellsToJson
 import com.veradux.sheetsofthedemonlord.ui.theme.SheetsOfTheDemonLordTheme
 
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        convertPdfSpellsToJson(assets.open("some spells"))
 
         setContent {
             val navController = rememberNavController()
@@ -35,4 +38,3 @@ fun MainMenuNavHost(navController: NavHostController) {
         // add other graphs for the other screens here
     }
 }
-
