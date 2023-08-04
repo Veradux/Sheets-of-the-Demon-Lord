@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.veradux.sheetsofthedemonlord.characters.CharactersScreens.CharacterRoute
+import com.veradux.sheetsofthedemonlord.characters.CharactersScreen
 import com.veradux.sheetsofthedemonlord.characters.charactersGraph
 import com.veradux.sheetsofthedemonlord.gameinfo.convertPdfSpellsToJson
 import com.veradux.sheetsofthedemonlord.ui.theme.SheetsOfTheDemonLordTheme
@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
 fun MainMenuNavHost(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = CharacterRoute.name,
+        startDestination = CharactersScreen.ROUTE,
     ) {
         charactersGraph(navController)
         // add other graphs for the other screens here
