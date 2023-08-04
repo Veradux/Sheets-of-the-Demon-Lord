@@ -1,7 +1,6 @@
 package com.veradux.sheetsofthedemonlord.gameinfo
 
 import android.util.Log
-import com.google.gson.Gson
 import com.veradux.sheetsofthedemonlord.gameinfo.model.Spell
 import java.io.BufferedReader
 import java.io.InputStream
@@ -16,18 +15,11 @@ import java.util.Locale
 //  medium monster, and medium monsters (plural), etc.
 //  4. Line separators could be added after the spell name line and after the Area, Duration, and Target lines.
 
-fun parsePdfSpellsToJson(inputStream: InputStream) {
+fun parsePdfSpells(inputStream: InputStream): List<Spell> {
     val plainTextLines = readInputStream(inputStream)
-    logLines(plainTextLines, 1)
-
     val linesWithoutPageNumbers = removePageNumberLines(plainTextLines)
-    logLines(linesWithoutPageNumbers, 2)
-
     val linesWithoutTraditionDescriptions = extractTraditionDescriptions(linesWithoutPageNumbers)
-    logLines(linesWithoutTraditionDescriptions, 3)
-
-    val spells = getSpellsFromLines(linesWithoutTraditionDescriptions)
-    Log.d("pdf 4", Gson().toJson(spells))
+    return getSpellsFromLines(linesWithoutTraditionDescriptions)
 }
 
 fun getSpellsFromLines(lines: List<String>): List<Spell> {
