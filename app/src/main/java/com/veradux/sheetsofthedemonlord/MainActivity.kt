@@ -8,7 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.veradux.sheetsofthedemonlord.characters.CharactersScreen
-import com.veradux.sheetsofthedemonlord.characters.charactersGraph
+import com.veradux.sheetsofthedemonlord.characters.charactersNavGraph
 import com.veradux.sheetsofthedemonlord.gameinfo.convertPdfSpellsToJson
 import com.veradux.sheetsofthedemonlord.ui.theme.SheetsOfTheDemonLordTheme
 
@@ -34,7 +34,7 @@ fun MainMenuNavHost(navController: NavHostController) {
         navController = navController,
         startDestination = CharactersScreen.ROUTE,
     ) {
-        charactersGraph(navController)
+        charactersNavGraph(navController)
         // add other graphs for the other screens here
     }
 }

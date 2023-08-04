@@ -12,7 +12,7 @@ import com.veradux.sheetsofthedemonlord.characters.charactersheet.presentation.C
 // todo replace this with vm
 lateinit var demonLordCharacter: DemonLordCharacter
 
-fun NavGraphBuilder.characterGraph(navController: NavController) {
+fun NavGraphBuilder.charactersNavGraph(navController: NavController) {
     navigation(startDestination = CharactersScreen.LIST, route = CharactersScreen.ROUTE) {
 
         composable(route = CharactersScreen.LIST) {
