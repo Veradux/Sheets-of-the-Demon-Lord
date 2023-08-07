@@ -14,6 +14,7 @@ import java.util.Locale
 //  Triggered, Sacrifice, Permanence, Attack Roll 20+. Also all mentions of creatures such as 'small genie',
 //  medium monster, and medium monsters (plural), etc.
 //  4. Line separators could be added after the spell name line and after the Area, Duration, and Target lines.
+//  5. Occult Philosophy has level 10 spells, which will break the current implementation.
 
 fun parsePdfSpells(inputStream: InputStream): List<Spell> {
     val plainTextLines = readInputStream(inputStream)
