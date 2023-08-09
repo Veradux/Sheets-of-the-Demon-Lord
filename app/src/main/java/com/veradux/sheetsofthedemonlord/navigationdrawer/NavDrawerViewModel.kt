@@ -1,4 +1,4 @@
-package com.veradux.sheetsofthedemonlord
+package com.veradux.sheetsofthedemonlord.navigationdrawer
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
