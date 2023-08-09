@@ -1,7 +1,7 @@
 package com.veradux.sheetsofthedemonlord.gameinfo
 
 import android.util.Log
-import com.veradux.sheetsofthedemonlord.gameinfo.model.Spell
+import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.Spell
 import java.io.BufferedReader
 import java.io.InputStream
 import java.util.Locale

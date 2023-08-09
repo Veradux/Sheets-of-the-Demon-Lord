@@ -1,4 +1,4 @@
-package com.veradux.sheetsofthedemonlord.gameinfo.model
+package com.veradux.sheetsofthedemonlord.gameinfo.spells.model
 
 data class Spell(
     val name: String,
