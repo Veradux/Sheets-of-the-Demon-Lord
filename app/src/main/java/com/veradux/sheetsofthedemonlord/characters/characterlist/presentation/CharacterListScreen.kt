@@ -28,18 +28,21 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.veradux.sheetsofthedemonlord.characters.characterlist.data.mock.CharactersApiMock
+import com.veradux.sheetsofthedemonlord.R
 import com.veradux.sheetsofthedemonlord.characters.characterlist.model.DemonLordCharacter
 import com.veradux.sheetsofthedemonlord.ui.theme.SheetsOfTheDemonLordTheme
 
 @Composable
 fun CharactersListScreen(
     onNewCharacterButtonClicked: () -> Unit,
-    onCharacterSelectedButtonClicked: (DemonLordCharacter) -> Unit
+    onCharacterSelectedButtonClicked: (DemonLordCharacter) -> Unit,
+    viewModel: CharactersListViewModel = CharactersListViewModel()
 ) {
     Scaffold(
         floatingActionButtonPosition = FabPosition.End,
@@ -49,15 +52,25 @@ fun CharactersListScreen(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Add,
-                    contentDescription = "Add Character Sheet",
+                    contentDescription = stringResource(R.string.new_character),
                 )
             }
         }
     ) { paddingValues ->
         Surface(modifier = Modifier.padding(paddingValues), color = MaterialTheme.colorScheme.background) {
-            // TODO figure out how to use view models and APIs
-            val api = CharactersApiMock()
-            CharacterList(onCharacterSelectedButtonClicked, api.getCharacters())
+            val characters = viewModel.getCharacters()
+            if (characters.isNotEmpty()) {
+                CharacterList(onCharacterSelectedButtonClicked, characters)
+            } else {
+                Text(
+                    text = stringResource(R.string.create_first_character),
+                    fontSize = 32.sp,
+                    textAlign = TextAlign.Center,
+                    lineHeight = 40.sp,
+                    modifier = Modifier
+                        .padding(40.dp)
+                )
+            }
         }
     }
 }
@@ -104,7 +117,9 @@ fun CharacterCard(onCharacterSelectedButtonClicked: (DemonLordCharacter) -> Unit
                 )
             }
             Text(
-                text = with(character) { "Level $level $ancestryName $novicePath" },
+                text = with(character) {
+                    stringResource(R.string.character_card_description, level, ancestryName, novicePath.name)
+                },
                 modifier = Modifier.padding(8.dp)
             )
         }

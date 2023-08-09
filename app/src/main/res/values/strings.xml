@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Sheets of the Demon Lord</string>
+    <string name="spells">Spells</string>
+    <string name="ancestries">Ancestries</string>
+    <string name="combat_actions">Combat actions</string>
+    <string name="characters">Your characters</string>
+    <string name="new_character">New character</string>
+    <string name="character_card_description">Level %1$d %2$s %3$s</string>
+    <string name="create_first_character">Create your first character with the button below!</string>
 </resources>

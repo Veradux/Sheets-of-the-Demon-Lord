@@ -12,10 +12,11 @@ import com.veradux.sheetsofthedemonlord.characters.charactersheet.presentation.C
 // todo replace this with vm
 lateinit var demonLordCharacter: DemonLordCharacter
 
-fun NavGraphBuilder.charactersNavGraph(navController: NavController) {
+fun NavGraphBuilder.charactersNavGraph(navController: NavController, setNavDrawerSelectionTo: (String) -> Unit) {
     navigation(startDestination = CharactersScreen.LIST, route = CharactersScreen.ROUTE) {
 
         composable(route = CharactersScreen.LIST) {
+            setNavDrawerSelectionTo(CharactersScreen.LIST)
             CharactersListScreen(
                 onNewCharacterButtonClicked = {
                     navController.navigate(CharactersScreen.CREATION)
@@ -26,10 +27,12 @@ fun NavGraphBuilder.charactersNavGraph(navController: NavController) {
         }
 
         composable(route = CharactersScreen.CREATION) {
+            setNavDrawerSelectionTo(CharactersScreen.CREATION)
             CharacterCreationScreen()
         }
 
         composable(route = CharactersScreen.SHEET) {
+            setNavDrawerSelectionTo(CharactersScreen.SHEET)
             CharacterSheetScreen(demonLordCharacter)
         }
     }
