@@ -16,14 +16,14 @@ import java.util.Locale
 //  4. Line separators could be added after the spell name line and after the Area, Duration, and Target lines.
 //  5. Occult Philosophy has level 10 spells, which will break the current implementation.
 
-fun parsePdfSpells(inputStream: InputStream): List<Spell> {
-    val plainTextLines = readInputStream(inputStream)
+fun parsePdfSpells(input: InputStream, sourceBook: String): List<Spell> {
+    val plainTextLines = readInputStream(input)
     val linesWithoutPageNumbers = removePageNumberLines(plainTextLines)
     val linesWithoutTraditionDescriptions = extractTraditionDescriptions(linesWithoutPageNumbers)
-    return getSpellsFromLines(linesWithoutTraditionDescriptions)
+    return getSpellsFromLines(linesWithoutTraditionDescriptions, sourceBook)
 }
 
-fun getSpellsFromLines(lines: List<String>): List<Spell> {
+fun getSpellsFromLines(lines: List<String>, sourceBook: String): List<Spell> {
     val tempLines = lines.toMutableList()
     val spells = mutableListOf<Spell>()
 
@@ -64,7 +64,8 @@ fun getSpellsFromLines(lines: List<String>): List<Spell> {
                 // or that there are spell types other than ATTACK and UTILITY.
                 type = spellType!!,
                 level = spellTitle.last().digitToInt(),
-                description = spellDescription ?: "oof"
+                description = spellDescription ?: "oof",
+                sourceBook = sourceBook
             )
         )
 

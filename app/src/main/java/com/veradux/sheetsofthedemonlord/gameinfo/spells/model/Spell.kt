@@ -5,7 +5,8 @@ data class Spell(
     val tradition: String,
     val type: Type,
     val level: Int,
-    val description: String
+    val description: String,
+    val sourceBook: String
 ) {
     enum class Type {
         UTILITY, ATTACK
