@@ -9,7 +9,7 @@ class NavDrawerViewModel : ViewModel() {
 
     private var selectedButtonState: MutableState<String> = mutableStateOf(CharactersScreen.LIST)
 
-    fun updateSelectedButtonState(route: String) {
+    fun setNavDrawerSelectionTo(route: String) {
         selectedButtonState.value = route
     }
 

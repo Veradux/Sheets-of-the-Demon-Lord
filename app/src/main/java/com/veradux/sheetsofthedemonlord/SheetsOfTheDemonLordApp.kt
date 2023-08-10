@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.veradux.sheetsofthedemonlord.characters.CharactersScreen
 import com.veradux.sheetsofthedemonlord.characters.charactersNavGraph
+import com.veradux.sheetsofthedemonlord.gameinfo.gameInfoNavGraph
 import com.veradux.sheetsofthedemonlord.navigationdrawer.DemonLordNavigationDrawer
 import com.veradux.sheetsofthedemonlord.navigationdrawer.NavDrawerViewModel
 
@@ -27,7 +28,8 @@ fun SheetsOfTheDemonLordApp() {
             DemonLordNavigationDrawer(navController, snackBarHostState, drawerViewModel) {
                 NavHost(navController = navController, startDestination = CharactersScreen.ROUTE) {
 
-                    charactersNavGraph(navController, drawerViewModel::updateSelectedButtonState)
+                    charactersNavGraph(navController, drawerViewModel::setNavDrawerSelectionTo)
+                    gameInfoNavGraph(drawerViewModel::setNavDrawerSelectionTo)
                     // add other graphs for the other screens here
                 }
             }
