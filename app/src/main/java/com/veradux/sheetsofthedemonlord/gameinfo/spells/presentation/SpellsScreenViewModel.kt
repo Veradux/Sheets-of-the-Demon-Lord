@@ -1,61 +1,27 @@
 package com.veradux.sheetsofthedemonlord.gameinfo.spells.presentation
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.Spell
 import com.veradux.sheetsofthedemonlord.spells
 
 class SpellsScreenViewModel : ViewModel() {
-    val searchText = mutableStateOf("")
-    val filteredSpells = spells.toMutableList()
 
-    // The booleans signify if the filter is enabled.
-    private val filters = mapOf<FilterCategory, Map<String, Boolean>>(
-        FilterCategory.TRADITIONS to mutableMapOf(
-            "Arcana" to false,
-            "Air" to false,
-            "Alteration" to false,
-            "Battle" to false,
-            "Conjuration" to false
-        ),
-        FilterCategory.LEVEL to mutableMapOf(
-            "0" to false,
-            "1" to false,
-            "2" to false,
-            "3" to false,
-            "4" to false,
-            "5" to false
-        ),
-        FilterCategory.PROPERTIES to mutableMapOf(
-            "Requirement" to false,
-            "Area" to false,
-            "Target" to false,
-            "Duration" to false
-        ),
-        FilterCategory.SOURCE_BOOK to mutableMapOf(
-            "Shadow of the Demon Lord" to false,
-            "Occult Philosophy" to false
-        ),
-    )
+    private val filteredSpells = spells.toMutableList()
 
-    private fun areAllFiltersOff() =
-        !filters.any { filterCategory -> filterCategory.value.any { filter -> filter.value } }
+    var filters = Filters()
 
-    fun getFilteredSpells(): List<Spell> =
-        if (areAllFiltersOff()) filteredSpells
-        else filteredSpells.filter { spell ->
-            filters.any { category ->
-                when (category.key) {
-                    // the "it.value" is a boolean which represents if the filter is on
-                    FilterCategory.LEVEL -> category.value.any { it.value && it.key == spell.level.toString() }
-                    FilterCategory.TRADITIONS -> category.value.any { it.value && it.key == spell.tradition }
-                    FilterCategory.PROPERTIES -> category.value.any { it.value && spell.description.contains(it.key) }
-                    FilterCategory.SOURCE_BOOK -> category.value.any { it.value && it.key == spell.sourceBook }
-                }
-            }
-        }
-}
-
-enum class FilterCategory {
-    TRADITIONS, LEVEL, PROPERTIES, SOURCE_BOOK
+    class Filters(
+        val traditions: List<String> = listOf(
+            "Arcana",
+            "Air",
+            "Alteration",
+            "Battle",
+            "Conjuration",
+            // TODO add the rest of the traditions
+        ),
+        val level: List<String> = listOf("0", "1", "2", "3", "4", "5"),
+        val properties: List<String> = listOf("Requirement", "Area", "Target", "Duration"),
+        val sourceBook: List<String> = listOf("Shadow of the Demon Lord", "Occult Philosophy")
+    ) {
+        fun getAllFilters(): List<List<String>> = listOf(traditions, level, properties, sourceBook)
+    }
 }
