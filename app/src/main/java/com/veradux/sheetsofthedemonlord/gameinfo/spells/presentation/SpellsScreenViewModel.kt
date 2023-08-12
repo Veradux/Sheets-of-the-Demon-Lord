@@ -1,27 +1,60 @@
 package com.veradux.sheetsofthedemonlord.gameinfo.spells.presentation
 
 import androidx.lifecycle.ViewModel
+import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.Spell
 import com.veradux.sheetsofthedemonlord.spells
 
 class SpellsScreenViewModel : ViewModel() {
 
-    private val filteredSpells = spells.toMutableList()
+    val traditionFilters: List<String> = listOf(
+        "Arcana",
+        "Air",
+        "Battle",
+        "Alteration",
+        "Conjuration",
+        "Celestial",
+        "Curse",
+        "Chaos",
+        "Divination",
+        "Destruction",
+        "Enchantment",
+        "Earth",
+        "Forbidden",
+        "Fire",
+        "Illusion",
+        "Life",
+        "Necromancy",
+        "Nature",
+        "Protection",
+        "Primal",
+        "Rune",
+        "Song",
+        "Shadow",
+        "Storm",
+        "Technomancy",
+        "Theurgy",
+        "Teleportation",
+        "Transformation",
+        "Time",
+        "Water",
+    )
+    val levelFilters: List<String> = listOf("0", "1", "2", "3", "4", "5")
+    val propertyFilters: List<String> = listOf("Requirement", "Area", "Target", "Duration")
+    val sourceBookFilters: List<String> = listOf("Shadow of the Demon Lord", "Occult Philosophy")
 
-    var filters = Filters()
+    fun getFilteredSpells(
+        selectedTraditions: List<String>,
+        selectedLevels: List<String>,
+        selectedProperties: List<String>,
+        selectedSourceBook: List<String>
+    ): List<Spell> =
+        // if all filters are off for a certain category, ignore them and show all spells
+        spells.filter { spell ->
+            (selectedTraditions.isEmpty() or selectedTraditions.contains(spell.tradition.capitalize())) and
+                    (selectedLevels.isEmpty() or selectedLevels.contains(spell.level.toString())) and
+                    (selectedSourceBook.isEmpty() or selectedSourceBook.contains(spell.sourceBook)) and
+                    (selectedProperties.isEmpty() or selectedProperties.any { spell.description.contains(it) })
+        }
 
-    class Filters(
-        val traditions: List<String> = listOf(
-            "Arcana",
-            "Air",
-            "Alteration",
-            "Battle",
-            "Conjuration",
-            // TODO add the rest of the traditions
-        ),
-        val level: List<String> = listOf("0", "1", "2", "3", "4", "5"),
-        val properties: List<String> = listOf("Requirement", "Area", "Target", "Duration"),
-        val sourceBook: List<String> = listOf("Shadow of the Demon Lord", "Occult Philosophy")
-    ) {
-        fun getAllFilters(): List<List<String>> = listOf(traditions, level, properties, sourceBook)
-    }
+    private fun String.capitalize() = lowercase().replaceFirstChar { it.uppercase() }
 }

@@ -12,4 +12,5 @@
     <string name="level">Level</string>
     <string name="properties">Properties</string>
     <string name="source_book">Source book</string>
+    <string name="filter">Filter</string>
 </resources>
