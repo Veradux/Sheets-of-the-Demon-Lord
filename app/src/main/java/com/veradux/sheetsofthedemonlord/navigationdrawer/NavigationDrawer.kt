@@ -19,6 +19,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -36,7 +37,7 @@ import kotlinx.coroutines.launch
 fun DemonLordNavigationDrawer(
     navController: NavHostController,
     snackBarHostState: SnackbarHostState,
-    viewModel: NavDrawerViewModel,
+    selectedScreenState: MutableState<String>,
     content: @Composable () -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -60,12 +61,12 @@ fun DemonLordNavigationDrawer(
                             modifier = Modifier.padding(horizontal = 16.dp),
                             label = { Text(text = stringResource(button.label)) },
                             icon = { Icon(button.icon, stringResource(button.label)) },
-                            selected = viewModel.isButtonSelected(button.screenRoute),
+                            selected = button.screenRoute == selectedScreenState.value,
                             onClick = {
                                 if (button.isImplemented) {
                                     scope.launch { drawerState.close() }
                                     navController.navigate(button.screenRoute)
-                                    viewModel.setNavDrawerSelectionTo(button.screenRoute)
+                                    selectedScreenState.value = button.screenRoute
                                 } else {
                                     scope.launch {
                                         snackBarHostState.showSnackbar("This feature will be implemented soon!")

@@ -7,6 +7,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -15,7 +16,6 @@ import com.veradux.sheetsofthedemonlord.characters.CharactersScreen
 import com.veradux.sheetsofthedemonlord.characters.charactersNavGraph
 import com.veradux.sheetsofthedemonlord.gameinfo.gameInfoNavGraph
 import com.veradux.sheetsofthedemonlord.navigationdrawer.DemonLordNavigationDrawer
-import com.veradux.sheetsofthedemonlord.navigationdrawer.NavDrawerViewModel
 
 @Composable
 fun SheetsOfTheDemonLordApp() {
@@ -24,12 +24,16 @@ fun SheetsOfTheDemonLordApp() {
     Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) { paddingValues ->
         Surface(modifier = Modifier.padding(paddingValues), color = MaterialTheme.colorScheme.background) {
             val navController = rememberNavController()
-            val drawerViewModel = NavDrawerViewModel()
-            DemonLordNavigationDrawer(navController, snackBarHostState, drawerViewModel) {
+            val selectedScreenState = remember { mutableStateOf(CharactersScreen.LIST) }
+            DemonLordNavigationDrawer(navController, snackBarHostState, selectedScreenState) {
                 NavHost(navController = navController, startDestination = CharactersScreen.ROUTE) {
 
-                    charactersNavGraph(navController, drawerViewModel::setNavDrawerSelectionTo)
-                    gameInfoNavGraph(drawerViewModel::setNavDrawerSelectionTo)
+                    charactersNavGraph(navController) { newValue ->
+                        selectedScreenState.value = newValue
+                    }
+                    gameInfoNavGraph { newValue ->
+                        selectedScreenState.value = newValue
+                    }
                     // add other graphs for the other screens here
                 }
             }
