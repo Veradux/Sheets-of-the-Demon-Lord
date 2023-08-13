@@ -24,13 +24,10 @@ data class Spell(
         const val DURATION = "Duration"
     }
 
-    fun getPropertiesText(): String = StringBuilder().let { builder ->
+    fun getPropertiesText(): String =
         listOf(requirement, area, target, duration)
             .filter { it.isNotEmpty() }
-            .forEach { builder.append(it + "\n") }
-        // remove the last new line
-        builder.substring(0, builder.length - 1).toString()
-    }
+            .joinToString(separator = "\n")
 
     companion object {
 
