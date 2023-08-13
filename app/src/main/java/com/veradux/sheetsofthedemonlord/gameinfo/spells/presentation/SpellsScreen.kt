@@ -18,6 +18,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,11 +31,16 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.veradux.sheetsofthedemonlord.R
+import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.Spell
 
 @Composable
 fun SpellsScreen(viewModel: SpellsScreenViewModel = SpellsScreenViewModel()) {
@@ -59,22 +65,8 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = SpellsScreenViewModel()) {
             }
         }
 
-        LazyColumn(Modifier.padding(24.dp)) {
-            items(filteredSpells) { spell ->
-                Column(modifier = Modifier.padding(top = 16.dp)) {
-                    Row(Modifier.padding(8.dp)) {
-                        Text(
-                            text = spell.name,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.weight(1f),
-                        )
-                        Text(text = " ${spell.tradition} ${spell.type} ${spell.level}")
-                    }
-                    Divider(modifier = Modifier.padding(horizontal = 8.dp))
-                    // TODO instead of replacing this here every time, do it when parsing the spells
-                    Text(text = spell.description.replace("\n", ""))
-                }
-            }
+        LazyColumn {
+            items(filteredSpells) { Spell(it) }
         }
     }
 
@@ -119,6 +111,38 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = SpellsScreenViewModel()) {
     }
 }
 
+@Composable
+fun Spell(spell: Spell) {
+    Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)) {
+        // spell title
+        Row {
+            Text(
+                text = spell.name,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(text = " ${spell.tradition} ${spell.type} ${spell.level}")
+        }
+
+        Divider(modifier = Modifier.padding(vertical = 4.dp))
+
+        // spell properties
+        spell.getPropertiesText().let {
+            if (it.isNotEmpty()) {
+                Text(text = textBoldKeywords(it, Spell.propertyKeywords))
+                Divider(modifier = Modifier.padding(vertical = 4.dp))
+            }
+        }
+
+        // spell description
+        Text(
+            text = textBoldKeywords(spell.description, Spell.descriptionKeywords),
+            modifier = Modifier.padding(vertical = 4.dp)
+        )
+    }
+}
+
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun FilterCategory(
@@ -148,4 +172,17 @@ fun FilterCategory(
             )
         }
     }
+}
+
+private fun textBoldKeywords(text: String, keywords: List<String>): AnnotatedString = buildAnnotatedString {
+    var startIndex = 0
+    keywords.filter { text.contains(it) }.forEach { keyword ->
+        val indexOfKeyword = text.indexOf(keyword)
+        append(text.substring(startIndex, indexOfKeyword))
+        startIndex = indexOfKeyword + keyword.length
+        withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+            append(keyword)
+        }
+    }
+    append(text.substring(startIndex, text.length))
 }

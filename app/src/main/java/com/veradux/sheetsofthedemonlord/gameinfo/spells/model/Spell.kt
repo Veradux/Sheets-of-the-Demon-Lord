@@ -5,14 +5,37 @@ data class Spell(
     val tradition: String,
     val type: Type,
     val level: Int,
+    val requirement: String = "",
+    val area: String = "",
+    val target: String = "",
+    val duration: String = "",
     val description: String,
     val sourceBook: String
 ) {
+
     enum class Type {
         UTILITY, ATTACK
     }
 
+    object Property {
+        const val REQUIREMENT = "Requirement"
+        const val TARGET = "Target"
+        const val AREA = "Area"
+        const val DURATION = "Duration"
+    }
+
+    fun getPropertiesText(): String = StringBuilder().let { builder ->
+        listOf(requirement, area, target, duration)
+            .filter { it.isNotEmpty() }
+            .forEach { builder.append(it + "\n") }
+        // remove the last new line
+        builder.substring(0, builder.length - 1).toString()
+    }
+
     companion object {
+
+        val descriptionKeywords = listOf("Triggered", "Sacrifice", "Permanence", "Attack Roll 20+")
+        val propertyKeywords = listOf(Property.REQUIREMENT, Property.TARGET, Property.AREA, Property.DURATION)
 
         data class Tradition(
             val name: String,
@@ -59,5 +82,4 @@ data class Spell(
             Tradition("Water", Tradition.Attribute.WILL),
         )
     }
-
 }
