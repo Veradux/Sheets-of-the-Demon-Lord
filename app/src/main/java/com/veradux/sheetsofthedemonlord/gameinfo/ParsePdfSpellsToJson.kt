@@ -15,6 +15,9 @@ import java.util.Locale
 //  medium monster, and medium monsters (plural), etc.
 //  4. Line separators could be added after the spell name line and after the Area, Duration, and Target lines.
 //  5. Occult Philosophy has level 10 spells, which will break the current implementation.
+//  6. The BOLSTER DEFENSE spell has : after target and duration. If you recopy the text file, REMEMBER to fix this again.
+//  7. STRIKE LIKE LIGHTNING area property is broken, fix manually.
+//  8. Find and replace all instances of ’ with '
 
 fun parsePdfSpells(input: InputStream, sourceBook: String): List<Spell> {
     val plainTextLines = readInputStream(input)
@@ -52,9 +55,23 @@ fun getSpellsFromLines(lines: List<String>, sourceBook: String): List<Spell> {
         val spellType: Spell.Type? = if (spellTitle.contains(Spell.Type.UTILITY.name)) Spell.Type.UTILITY else {
             if (spellTitle.contains(Spell.Type.ATTACK.name)) Spell.Type.ATTACK else null
         }
-        val spellDescription = tempLines
+
+        val spellText = tempLines
             .slice(spellTitleIndex + 1..lastLineOfSpellIndex)
-            .reduceOrNull { acc, s -> "$acc\n$s" }
+            .reduceOrNull { accumulator, line -> "$accumulator$line" }
+            ?: throw Exception("Spell description for $spellTitle is null!")
+
+        val requirementProperty = spellText.findSpellProperty(Spell.Property.REQUIREMENT)
+        val areaProperty = spellText.findSpellProperty(Spell.Property.AREA)
+        val targetProperty = spellText.findSpellProperty(Spell.Property.TARGET)
+        val durationProperty = spellText.findSpellProperty(Spell.Property.DURATION)
+
+        val spellDescription = spellText.replace("  ", " ")
+        .replace(requirementProperty, "")
+        .replace(areaProperty, "")
+        .replace(targetProperty, "")
+        .replace(durationProperty, "")
+
         spells.add(
             Spell(
                 name = spellTitle.substring(0, spellTitle.lastIndexOf(tradition) - 1),
@@ -64,7 +81,11 @@ fun getSpellsFromLines(lines: List<String>, sourceBook: String): List<Spell> {
                 // or that there are spell types other than ATTACK and UTILITY.
                 type = spellType!!,
                 level = spellTitle.last().digitToInt(),
-                description = spellDescription ?: "oof",
+                requirement = requirementProperty,
+                area = areaProperty,
+                target = targetProperty,
+                duration = durationProperty,
+                description = spellDescription,
                 sourceBook = sourceBook
             )
         )
@@ -73,6 +94,17 @@ fun getSpellsFromLines(lines: List<String>, sourceBook: String): List<Spell> {
     } while (spellTitleIndex != -1)
 
     return spells
+}
+
+private fun String.findSpellProperty(propertyKeyword: String): String {
+    return if (contains(propertyKeyword)) {
+        val descriptionAfterKeyword = substring(indexOf(propertyKeyword) + propertyKeyword.length + 2)
+        val firstCapitalLetter = descriptionAfterKeyword.first { it in 'A'..'Z' }
+        val capitalLetterIndex = descriptionAfterKeyword.indexOf(firstCapitalLetter)
+        val textAfterCapitalLetter = descriptionAfterKeyword.substring(capitalLetterIndex)
+        val indexAfterProperty = indexOf(textAfterCapitalLetter)
+        substring(indexOf(propertyKeyword), indexAfterProperty)
+    } else ""
 }
 
 private fun readInputStream(inputStream: InputStream): List<String> {
