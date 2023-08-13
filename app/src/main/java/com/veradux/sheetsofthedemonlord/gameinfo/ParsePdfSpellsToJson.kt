@@ -1,6 +1,5 @@
 package com.veradux.sheetsofthedemonlord.gameinfo
 
-import android.util.Log
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.Spell
 import java.io.BufferedReader
 import java.io.InputStream
@@ -10,14 +9,9 @@ import java.util.Locale
 //  1. The chaos spell called Wild Magic has a random d20 roll table in it. It will have to be fixed manually.
 //  2. Conjuration has a snippet of rules which will be incorrectly added to the Conjure Weapon spell automatically.
 //  Instead it should be moved to the tradition description. Look for other similar cases.
-//  3. A bunch of CASE SENSITIVE keywords will need to be bolded. Such as Area, Target, Requirement, Duration,
-//  Triggered, Sacrifice, Permanence, Attack Roll 20+. Also all mentions of creatures such as 'small genie',
-//  medium monster, and medium monsters (plural), etc.
-//  4. Line separators could be added after the spell name line and after the Area, Duration, and Target lines.
-//  5. Occult Philosophy has level 10 spells, which will break the current implementation.
-//  6. The BOLSTER DEFENSE spell has : after target and duration. If you recopy the text file, REMEMBER to fix this again.
-//  7. STRIKE LIKE LIGHTNING area property is broken, fix manually.
-//  8. Find and replace all instances of ’ with '
+//  3. STRIKE LIKE LIGHTNING area property is broken because it has a capital letter in it ( the word Speed), fix manually.
+//  4. The BOLSTER DEFENSE spell has : after target and duration. If you recopy the text file, REMEMBER to fix this again.
+//  5. Find and replace all instances of ’ with ' if you recopy the text file.
 
 fun parsePdfSpells(input: InputStream, sourceBook: String): List<Spell> {
     val plainTextLines = readInputStream(input)
@@ -66,11 +60,22 @@ fun getSpellsFromLines(lines: List<String>, sourceBook: String): List<Spell> {
         val targetProperty = spellText.findSpellProperty(Spell.Property.TARGET)
         val durationProperty = spellText.findSpellProperty(Spell.Property.DURATION)
 
-        val spellDescription = spellText.replace("  ", " ")
-        .replace(requirementProperty, "")
-        .replace(areaProperty, "")
-        .replace(targetProperty, "")
-        .replace(durationProperty, "")
+        var spellDescription = spellText.replace("  ", " ")
+            .replace(requirementProperty, "")
+            .replace(areaProperty, "")
+            .replace(targetProperty, "")
+            .replace(durationProperty, "")
+
+        // put description keywords on a new line, except if they are the first line
+        Spell.descriptionKeywords
+            .filter { spellDescription.contains(it) && spellDescription.indexOf(it) != 0 }
+            .forEach {
+                spellDescription = spellDescription.replaceRange(
+                    spellDescription.indexOf(it),
+                    spellDescription.indexOf(it),
+                    "\n"
+                )
+            }
 
         spells.add(
             Spell(
@@ -80,7 +85,7 @@ fun getSpellsFromLines(lines: List<String>, sourceBook: String): List<Spell> {
                 // If it crashes, it most likely means that the spell title index could be wrong,
                 // or that there are spell types other than ATTACK and UTILITY.
                 type = spellType!!,
-                level = spellTitle.last().digitToInt(),
+                level = splitSpellTitle.last().toInt(),
                 requirement = requirementProperty,
                 area = areaProperty,
                 target = targetProperty,
@@ -163,8 +168,4 @@ private fun extractTraditionDescriptions(lines: List<String>): List<String> {
         }
     }
     return newLines
-}
-
-private fun logLines(lines: List<String>, step: Int) {
-    Log.d("pdf $step", lines.reduce { acc, s -> "$acc\n$s" })
 }
