@@ -6,38 +6,7 @@ import com.veradux.sheetsofthedemonlord.spells
 
 class SpellsScreenViewModel : ViewModel() {
 
-    val traditionFilters: List<String> = listOf(
-        "Arcana",
-        "Air",
-        "Battle",
-        "Alteration",
-        "Conjuration",
-        "Celestial",
-        "Curse",
-        "Chaos",
-        "Divination",
-        "Destruction",
-        "Enchantment",
-        "Earth",
-        "Forbidden",
-        "Fire",
-        "Illusion",
-        "Life",
-        "Necromancy",
-        "Nature",
-        "Protection",
-        "Primal",
-        "Rune",
-        "Song",
-        "Shadow",
-        "Storm",
-        "Technomancy",
-        "Theurgy",
-        "Teleportation",
-        "Transformation",
-        "Time",
-        "Water",
-    )
+    val traditionFilters: List<String> = Spell.traditions.map { it.name }.sorted()
     val levelFilters: List<String> = listOf("0", "1", "2", "3", "4", "5")
     val propertyFilters: List<String> = listOf("Requirement", "Area", "Target", "Duration")
     val sourceBookFilters: List<String> = listOf("Shadow of the Demon Lord", "Occult Philosophy")

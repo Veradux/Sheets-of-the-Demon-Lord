@@ -52,7 +52,7 @@ fun getSpellsFromLines(lines: List<String>, sourceBook: String): List<Spell> {
 
         val spellText = tempLines
             .slice(spellTitleIndex + 1..lastLineOfSpellIndex)
-            .reduceOrNull { accumulator, line -> "$accumulator$line" }
+            .reduceOrNull { accumulator, line -> "$accumulator $line" }
             ?: throw Exception("Spell description for $spellTitle is null!")
 
         val requirementProperty = spellText.findSpellProperty(Spell.Property.REQUIREMENT)
