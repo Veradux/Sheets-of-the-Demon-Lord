@@ -29,6 +29,11 @@ data class Spell(
             .filter { it.isNotEmpty() }
             .joinToString(separator = "\n")
 
+    fun containsText(text: String): Boolean =
+        listOf(name, tradition, requirement, area, target, duration, description).any {
+            it.lowercase().contains(text.lowercase())
+        }
+
     companion object {
 
         val descriptionKeywords = listOf("Triggered", "Sacrifice", "Permanence", "Attack Roll 20+")

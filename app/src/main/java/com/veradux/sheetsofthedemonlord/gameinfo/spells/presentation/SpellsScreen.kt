@@ -1,49 +1,66 @@
 package com.veradux.sheetsofthedemonlord.gameinfo.spells.presentation
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.veradux.sheetsofthedemonlord.R
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.Spell
 
+// Experimental api is for the keyboard controller
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SpellsScreen(viewModel: SpellsScreenViewModel = SpellsScreenViewModel()) {
+    // filter dialog states
     var isFilterDialogOpen by remember { mutableStateOf(false) }
     val selectedTraditions = remember { mutableStateListOf<String>() }
     val selectedLevels = remember { mutableStateListOf<String>() }
@@ -57,32 +74,63 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = SpellsScreenViewModel()) {
         )
     }
 
-    Column {
-        Row(modifier = Modifier.padding(16.dp)) {
-            // TODO add a search bar here. To do that, update material3 dependency
-            Button(onClick = { isFilterDialogOpen = true }) {
-                Icon(imageVector = Icons.Default.Menu, contentDescription = "Filter spells")
-            }
-        }
+    // search bar states
+    var searchBarText by rememberSaveable { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    val onFiltersApplied = {
+        isFilterDialogOpen = false
+        filteredSpells.clear()
+        // TODO check if performance of addAll is bad
+        filteredSpells.addAll(
+            viewModel.getFilteredSpells(
+                selectedTraditions,
+                selectedLevels,
+                selectedProperties,
+                selectedSourceBooks,
+                searchBarText
+            )
+        )
+    }
 
-        LazyColumn {
-            items(filteredSpells) { Spell(it) }
-        }
+    Column {
+        // TODO this is the search bar, move it to a composable fun
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background, CircleShape),
+            value = searchBarText,
+            onValueChange = {
+                // TODO listen to this change to filter spells
+                searchBarText = it.lowercase()
+                onFiltersApplied()
+            },
+            placeholder = { Text(text = stringResource(R.string.spell_search_hint)) },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions = KeyboardActions(
+                onSearch = {
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
+                }),
+            leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
+            trailingIcon = {
+                IconButton(onClick = { isFilterDialogOpen = true }) {
+                    Icon(Icons.Filled.Menu, contentDescription = "Filter spells")
+                }
+            }
+        )
+        if (filteredSpells.isEmpty())
+            Text(text = "No spells", modifier = Modifier.align(Alignment.CenterHorizontally))
+        else
+            LazyColumn {
+                items(filteredSpells) { Spell(it) }
+            }
     }
 
     if (isFilterDialogOpen) {
-        val onDialogClose = {
-            isFilterDialogOpen = false
-            filteredSpells.clear()
-            // TODO check if performance of addAll is bad
-            filteredSpells.addAll(
-                viewModel.getFilteredSpells(
-                    selectedTraditions, selectedLevels, selectedProperties, selectedSourceBooks
-                )
-            )
-        }
         Dialog(
-            onDismissRequest = { onDialogClose() }, properties = DialogProperties(usePlatformDefaultWidth = false)
+            onDismissRequest = { onFiltersApplied() }, properties = DialogProperties(usePlatformDefaultWidth = false)
         ) {
             Surface {
                 Column(
@@ -91,7 +139,7 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = SpellsScreenViewModel()) {
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                 ) {
-                    Button(modifier = Modifier.align(Alignment.End), onClick = { onDialogClose() }) {
+                    Button(modifier = Modifier.align(Alignment.End), onClick = { onFiltersApplied() }) {
                         Text(text = stringResource(R.string.filter))
                     }
 
@@ -112,17 +160,26 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = SpellsScreenViewModel()) {
 }
 
 @Composable
+fun SearchBar() {
+    // TODO move the text field search bar here
+}
+
+@Composable
 fun Spell(spell: Spell) {
     Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)) {
         // spell title
         Row {
             Text(
                 text = spell.name,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.weight(1f),
+                fontSize = 18.sp,
                 color = MaterialTheme.colorScheme.primary
             )
-            Text(text = " ${spell.tradition} ${spell.type} ${spell.level}")
+            Text(
+                text = " ${spell.tradition} ${spell.type} ${spell.level}",
+                modifier = Modifier.align(Alignment.Bottom)
+            )
         }
 
         Divider(modifier = Modifier.padding(vertical = 4.dp))

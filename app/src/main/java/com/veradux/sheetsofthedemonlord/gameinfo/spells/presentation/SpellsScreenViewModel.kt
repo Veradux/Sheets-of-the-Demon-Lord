@@ -15,15 +15,16 @@ class SpellsScreenViewModel : ViewModel() {
         selectedTraditions: List<String>,
         selectedLevels: List<String>,
         selectedProperties: List<String>,
-        selectedSourceBook: List<String>
-    ): List<Spell> =
-        // if all filters are off for a certain category, ignore them and show all spells
-        spells.filter { spell ->
-            (selectedTraditions.isEmpty() or selectedTraditions.contains(spell.tradition.capitalize())) and
-                    (selectedLevels.isEmpty() or selectedLevels.contains(spell.level.toString())) and
-                    (selectedSourceBook.isEmpty() or selectedSourceBook.contains(spell.sourceBook)) and
-                    (selectedProperties.isEmpty() or selectedProperties.any { spell.description.contains(it) })
-        }
+        selectedSourceBook: List<String>,
+        searchText: String = ""
+    ): List<Spell> = spells.filter { spell ->
+        spell.containsText(searchText) &&
+                // if all filters are off for a certain category, ignore them and show all spells
+                (selectedTraditions.isEmpty() || selectedTraditions.contains(spell.tradition.capitalize())) &&
+                (selectedLevels.isEmpty() || selectedLevels.contains(spell.level.toString())) &&
+                (selectedSourceBook.isEmpty() || selectedSourceBook.contains(spell.sourceBook)) &&
+                (selectedProperties.isEmpty() || selectedProperties.any { spell.getPropertiesText().contains(it) })
+    }
 
     private fun String.capitalize() = lowercase().replaceFirstChar { it.uppercase() }
 }

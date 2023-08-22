@@ -13,4 +13,5 @@
     <string name="properties">Properties</string>
     <string name="source_book">Source book</string>
     <string name="filter">Filter</string>
+    <string name="spell_search_hint">Search for a spell</string>
 </resources>
