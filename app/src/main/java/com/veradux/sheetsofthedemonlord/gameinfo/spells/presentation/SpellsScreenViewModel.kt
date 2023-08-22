@@ -1,30 +1,48 @@
 package com.veradux.sheetsofthedemonlord.gameinfo.spells.presentation
 
 import androidx.lifecycle.ViewModel
+import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellFiltersRepository
+import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellFiltersRepositoryMock
+import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellsRepository
+import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellsRepositoryMock
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.Spell
-import com.veradux.sheetsofthedemonlord.spells
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
-class SpellsScreenViewModel : ViewModel() {
+class SpellsScreenViewModel(
+    spellsRepository: SpellsRepository = SpellsRepositoryMock(),
+    spellFiltersRepository: SpellFiltersRepository = SpellFiltersRepositoryMock()
+) : ViewModel() {
 
-    val traditionFilters: List<String> = Spell.traditions.map { it.name }.sorted()
-    val levelFilters: List<String> = listOf("0", "1", "2", "3", "4", "5")
-    val propertyFilters: List<String> = listOf("Requirement", "Area", "Target", "Duration")
-    val sourceBookFilters: List<String> = listOf("Shadow of the Demon Lord", "Occult Philosophy")
+    private val allSpells = spellsRepository.getSpells()
+    val allFilters = spellFiltersRepository.getSpellFilters()
 
-    fun getFilteredSpells(
-        selectedTraditions: List<String>,
-        selectedLevels: List<String>,
-        selectedProperties: List<String>,
-        selectedSourceBook: List<String>,
-        searchText: String = ""
-    ): List<Spell> = spells.filter { spell ->
-        spell.containsText(searchText) &&
-                // if all filters are off for a certain category, ignore them and show all spells
-                (selectedTraditions.isEmpty() || selectedTraditions.contains(spell.tradition.capitalize())) &&
-                (selectedLevels.isEmpty() || selectedLevels.contains(spell.level.toString())) &&
-                (selectedSourceBook.isEmpty() || selectedSourceBook.contains(spell.sourceBook)) &&
-                (selectedProperties.isEmpty() || selectedProperties.any { spell.getPropertiesText().contains(it) })
+    // states
+    private val _isFilterDialogOpen = MutableStateFlow(false)
+    val isFilterDialogOpen = _isFilterDialogOpen.asStateFlow()
+
+    private val _filteredSpells = MutableStateFlow(allSpells)
+    val filteredSpells = _filteredSpells.asStateFlow()
+
+    private val _spellFilters = MutableStateFlow(allFilters)
+    val spellFilters = _spellFilters.asStateFlow()
+
+    private val _searchBarText = MutableStateFlow("")
+    val searchBarText = _searchBarText.asStateFlow()
+
+    fun onSearchBarTextChange(text: String) {
+        _searchBarText.value = text
+        _filteredSpells.value = getFilteredSpells()
     }
 
-    private fun String.capitalize() = lowercase().replaceFirstChar { it.uppercase() }
+    fun setFilterDialogVisibilityStateTo(isVisible: Boolean) {
+        _isFilterDialogOpen.value = isVisible
+        if (!isVisible) {
+            _filteredSpells.value = getFilteredSpells()
+        }
+    }
+
+    private fun getFilteredSpells(): List<Spell> = allSpells.filter { spell ->
+        spell.containsText(searchBarText.value) && spellFilters.value.filter(spell)
+    }
 }
