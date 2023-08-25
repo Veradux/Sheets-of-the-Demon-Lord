@@ -7,4 +7,12 @@
     <string name="new_character">New character</string>
     <string name="character_card_description">Level %1$d %2$s %3$s</string>
     <string name="create_first_character">Create your first character with the button below!</string>
+    <!--Spell filter categories-->
+    <string name="traditions">Traditions</string>
+    <string name="level">Level</string>
+    <string name="properties">Properties</string>
+    <string name="source_book">Source book</string>
+    <string name="filter">Filter</string>
+    <string name="spell_search_hint">Search for a spell</string>
+    <string name="no_spells_found">No spells found. Try searching for something else or turning off some filters.</string>
 </resources>

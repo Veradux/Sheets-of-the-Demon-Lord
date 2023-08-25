@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.veradux.sheetsofthedemonlord.R
 import com.veradux.sheetsofthedemonlord.characters.CharactersScreen
+import com.veradux.sheetsofthedemonlord.gameinfo.GameInfoScreens
 import kotlinx.coroutines.launch
 
 @Composable
@@ -62,7 +63,7 @@ fun DemonLordNavigationDrawer(
                             icon = { Icon(button.icon, stringResource(button.label)) },
                             selected = button.screenRoute == selectedScreenState.value,
                             onClick = {
-                                if (button.screenRoute != null) {
+                                if (button.isImplemented) {
                                     scope.launch { drawerState.close() }
                                     navController.navigate(button.screenRoute)
                                     selectedScreenState.value = button.screenRoute
@@ -89,16 +90,14 @@ private fun getDemonLordNavButtons(): List<NavButton?> = listOf(
     NavButton(R.string.characters, CharactersScreen.LIST, Icons.Default.List),
     NavButton(R.string.new_character, CharactersScreen.CREATION, Icons.Default.Add),
     null,
-    NavButton(R.string.spells, null, Icons.Default.Info),
-    NavButton(R.string.ancestries, null, Icons.Default.Face),
-    NavButton(R.string.combat_actions, null, Icons.Default.KeyboardArrowDown)
+    NavButton(R.string.spells, GameInfoScreens.SPELLS, Icons.Default.Info),
+    NavButton(R.string.ancestries, GameInfoScreens.ANCESTRIES, Icons.Default.Face, false),
+    NavButton(R.string.combat_actions, GameInfoScreens.COMBAT_ACTIONS, Icons.Default.KeyboardArrowDown, false)
 )
 
 private data class NavButton(
     @StringRes val label: Int,
-    // TODO replace this idea with a boolean isImplemented
-    // TODO the nullable is added temporarily to be used for nav buttons which do not lead to a screen yet.
-    //  When all screens are developed, the nullable can be removed.
-    val screenRoute: String?,
-    val icon: ImageVector
+    val screenRoute: String,
+    val icon: ImageVector,
+    val isImplemented: Boolean = true
 )
