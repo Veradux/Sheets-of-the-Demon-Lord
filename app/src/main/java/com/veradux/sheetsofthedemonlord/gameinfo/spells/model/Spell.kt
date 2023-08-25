@@ -24,6 +24,8 @@ data class Spell(
         const val DURATION = "Duration"
     }
 
+    fun getPropertiesList() = listOf(requirement, area, target, duration).filter { it.isNotEmpty() }
+
     fun getPropertiesText(): String =
         listOf(requirement, area, target, duration)
             .filter { it.isNotEmpty() }
