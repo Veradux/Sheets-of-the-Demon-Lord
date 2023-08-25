@@ -6,7 +6,7 @@ import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellFiltersReposit
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellsRepository
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellsRepositoryMock
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.Spell
-import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.SpellFilters
+import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.SpellFilterCategories
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -35,8 +35,15 @@ class SpellsScreenViewModel(
         _filteredSpells.value = getFilteredSpells()
     }
 
-    fun setNewSpellFilters(newSpellFilters: SpellFilters) {
-        _spellFilters.value = newSpellFilters
+    fun updateSpellFilters(
+        filters: List<SpellFilterCategories.Filter>,
+        newFilter: SpellFilterCategories.Filter,
+        copyFilters: (List<SpellFilterCategories.Filter>) -> SpellFilterCategories
+    ) {
+        val mutableToggles = filters.toMutableList()
+        mutableToggles[mutableToggles.indexOf(newFilter)] =
+            SpellFilterCategories.Filter(newFilter.name, !newFilter.isEnabled)
+        _spellFilters.value = copyFilters(mutableToggles)
     }
 
     fun setFilterDialogVisibilityStateTo(isVisible: Boolean) {

@@ -40,12 +40,13 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.veradux.sheetsofthedemonlord.R
-import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.SpellFilters
+import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.SpellFilterCategories
 
 @Composable
 fun SpellsScreen(viewModel: SpellsScreenViewModel = viewModel()) {
@@ -69,9 +70,10 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = viewModel()) {
         if (filteredSpells.isEmpty())
             Text(
                 text = stringResource(R.string.no_spells_found),
+                textAlign = TextAlign.Center,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(24.dp)
+                    .padding(32.dp)
             )
         else {
             LazyColumn {
@@ -99,37 +101,33 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = viewModel()) {
                     }
 
                     FilterCategory(R.string.traditions, Icons.Default.Star, spellFilters.traditionFilters) { toggle ->
-                        val newToggles = updateSpellFilters(spellFilters.traditionFilters, toggle)
-                        viewModel.setNewSpellFilters(spellFilters.copy(traditionFilters = newToggles))
+                        viewModel.updateSpellFilters(spellFilters.traditionFilters, toggle) {
+                            spellFilters.copy(traditionFilters = it)
+                        }
                     }
                     Divider(modifier = Modifier.padding(8.dp))
                     FilterCategory(R.string.level, Icons.Default.Star, spellFilters.levelFilters) { toggle ->
-                        val newToggles = updateSpellFilters(spellFilters.levelFilters, toggle)
-                        viewModel.setNewSpellFilters(spellFilters.copy(levelFilters = newToggles))
+                        viewModel.updateSpellFilters(spellFilters.levelFilters, toggle) {
+                            spellFilters.copy(levelFilters = it)
+                        }
                     }
 
                     Divider(modifier = Modifier.padding(8.dp))
                     FilterCategory(R.string.properties, Icons.Default.Star, spellFilters.propertyFilters) { toggle ->
-                        val newToggles = updateSpellFilters(spellFilters.propertyFilters, toggle)
-                        viewModel.setNewSpellFilters(spellFilters.copy(propertyFilters = newToggles))
+                        viewModel.updateSpellFilters(spellFilters.propertyFilters, toggle) {
+                            spellFilters.copy(propertyFilters = it)
+                        }
                     }
-
                     Divider(modifier = Modifier.padding(8.dp))
                     FilterCategory(R.string.source_book, Icons.Default.Star, spellFilters.sourceBookFilters) { toggle ->
-                        val newToggles = updateSpellFilters(spellFilters.sourceBookFilters, toggle)
-                        viewModel.setNewSpellFilters(spellFilters.copy(sourceBookFilters = newToggles))
+                        viewModel.updateSpellFilters(spellFilters.sourceBookFilters, toggle) {
+                            spellFilters.copy(sourceBookFilters = it)
+                        }
                     }
                 }
             }
         }
     }
-}
-
-fun updateSpellFilters(toggles: List<SpellFilters.Toggle>, toggle: SpellFilters.Toggle): List<SpellFilters.Toggle> {
-    val mutableToggles = toggles.toMutableList()
-    val indexOfToggle = mutableToggles.indexOf(toggle)
-    mutableToggles[indexOfToggle] = SpellFilters.Toggle(toggle.name, !toggle.isSelected)
-    return mutableToggles
 }
 
 // Experimental api is for the keyboard controller
@@ -167,8 +165,8 @@ fun SpellsSearchBar(modifier: Modifier, searchBarText: String, onSearchBarTextCh
 fun FilterCategory(
     @StringRes categoryNameResource: Int,
     icon: ImageVector,
-    filters: List<SpellFilters.Toggle>,
-    onClick: (SpellFilters.Toggle) -> Unit
+    filters: List<SpellFilterCategories.Filter>,
+    onClick: (SpellFilterCategories.Filter) -> Unit
 ) {
     Row {
         Icon(icon, contentDescription = null, modifier = Modifier.align(Alignment.CenterVertically))
@@ -185,7 +183,7 @@ fun FilterCategory(
                 modifier = Modifier.padding(horizontal = 4.dp),
                 label = { Text(filter.name) },
                 onClick = { onClick(filter) },
-                selected = filter.isSelected,
+                selected = filter.isEnabled,
             )
         }
     }

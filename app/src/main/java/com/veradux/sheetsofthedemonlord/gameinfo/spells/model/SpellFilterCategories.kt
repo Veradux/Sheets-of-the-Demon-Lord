@@ -1,15 +1,15 @@
 package com.veradux.sheetsofthedemonlord.gameinfo.spells.model
 
-data class SpellFilters(
-    val traditionFilters: List<Toggle>,
-    val levelFilters: List<Toggle>,
-    val propertyFilters: List<Toggle>,
-    val sourceBookFilters: List<Toggle>
+data class SpellFilterCategories(
+    val traditionFilters: List<Filter>,
+    val levelFilters: List<Filter>,
+    val propertyFilters: List<Filter>,
+    val sourceBookFilters: List<Filter>
 ) {
 
-    data class Toggle(
+    data class Filter(
         val name: String,
-        val isSelected: Boolean = false
+        val isEnabled: Boolean = false
     )
 
     fun filter(spell: Spell): Boolean {
@@ -21,11 +21,11 @@ data class SpellFilters(
     }
 
     /**
-     * If all filters are off for a certain category,
+     * If all filters are disabled for a certain category,
      * that category will be ignored and all spells will be shown from it.
      */
-    private fun List<Toggle>.anyMatch(string: String): Boolean =
-        this.all { !it.isSelected } || this.filter { it.isSelected }.map { it.name }.any { string.contains(it) }
+    private fun List<Filter>.anyMatch(string: String): Boolean =
+        this.all { !it.isEnabled } || this.filter { it.isEnabled }.map { it.name }.any { string.contains(it) }
 
     private fun String.capitalize() = lowercase().replaceFirstChar { it.uppercase() }
 }
