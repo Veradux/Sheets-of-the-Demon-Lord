@@ -1,9 +1,11 @@
 package com.veradux.sheetsofthedemonlord.gameinfo.spells.presentation
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,14 +15,15 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -41,10 +44,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.veradux.sheetsofthedemonlord.R
 
 @Composable
-fun SpellsScreen(viewModel: SpellsScreenViewModel = SpellsScreenViewModel()) {
+fun SpellsScreen(viewModel: SpellsScreenViewModel = viewModel()) {
     // filter dialog states
     val isFilterDialogOpen by viewModel.isFilterDialogOpen.collectAsState(initial = false)
     val selectedTraditions = remember { mutableStateListOf<String>() }
@@ -56,13 +60,30 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = SpellsScreenViewModel()) {
     val spellFilters by viewModel.spellFilters.collectAsState()
 
     Column {
-        SpellsSearchBar(viewModel)
+        Row(modifier = Modifier.background(color = MaterialTheme.colorScheme.surfaceVariant)) {
+            SpellsSearchBar(
+                modifier = Modifier.weight(1f),
+                searchBarText = viewModel.searchBarText.collectAsState().value,
+                onSearchBarTextChange = viewModel::onSearchBarTextChange
+            )
+            IconButton(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                onClick = { viewModel.setFilterDialogVisibilityStateTo(true) }) {
+                Icon(Icons.Filled.Menu, contentDescription = "Filter spells")
+            }
+        }
         if (filteredSpells.isEmpty())
-            Text(text = "No spells", modifier = Modifier.align(Alignment.CenterHorizontally))
-        else
+            Text(
+                text = stringResource(R.string.no_spells_found),
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(24.dp)
+            )
+        else {
             LazyColumn {
                 items(filteredSpells) { Spell(it) }
             }
+        }
     }
 
     if (isFilterDialogOpen) {
@@ -77,10 +98,10 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = SpellsScreenViewModel()) {
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                 ) {
-                    Button(
+                    IconButton(
                         modifier = Modifier.align(Alignment.End),
                         onClick = { viewModel.setFilterDialogVisibilityStateTo(false) }) {
-                        Text(text = stringResource(R.string.filter))
+                        Icon(Icons.Filled.Menu, contentDescription = "Filter spells")
                     }
 
                     FilterCategory(R.string.traditions, selectedTraditions, spellFilters.traditionFilters)
@@ -102,14 +123,14 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = SpellsScreenViewModel()) {
 // Experimental api is for the keyboard controller
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SpellsSearchBar(viewModel: SpellsScreenViewModel) {
-    val searchBarText by viewModel.searchBarText.collectAsState()
+fun SpellsSearchBar(modifier: Modifier, searchBarText: String, onSearchBarTextChange: (String) -> Unit) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
     TextField(
+        modifier = modifier,
         value = searchBarText,
-        onValueChange = viewModel::onSearchBarTextChange,
+        onValueChange = onSearchBarTextChange,
         placeholder = { Text(text = stringResource(R.string.spell_search_hint)) },
         singleLine = true,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
@@ -120,8 +141,10 @@ fun SpellsSearchBar(viewModel: SpellsScreenViewModel) {
             }),
         leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
         trailingIcon = {
-            IconButton(onClick = { viewModel.setFilterDialogVisibilityStateTo(true) }) {
-                Icon(Icons.Filled.Menu, contentDescription = "Filter spells")
+            if (searchBarText.isNotEmpty()) {
+                IconButton(onClick = { onSearchBarTextChange("") }) {
+                    Icon(Icons.Filled.Clear, contentDescription = "Clear the search bar.")
+                }
             }
         }
     )
@@ -132,7 +155,7 @@ fun SpellsSearchBar(viewModel: SpellsScreenViewModel) {
 fun FilterCategory(
     @StringRes categoryNameResource: Int,
     selectedFilters: SnapshotStateList<String>,
-    filters: List<String>
+    allFilters: List<String>
 ) {
     Text(
         text = stringResource(categoryNameResource),
@@ -141,7 +164,7 @@ fun FilterCategory(
     )
 
     FlowRow {
-        filters.forEach { filter ->
+        allFilters.forEach { filter ->
             FilterChip(
                 modifier = Modifier.padding(horizontal = 4.dp),
                 label = { Text(filter) },
