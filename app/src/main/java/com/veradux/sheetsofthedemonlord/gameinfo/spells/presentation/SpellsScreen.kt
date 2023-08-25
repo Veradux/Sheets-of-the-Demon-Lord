@@ -1,7 +1,6 @@
 package com.veradux.sheetsofthedemonlord.gameinfo.spells.presentation
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -11,35 +10,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -53,27 +45,37 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = viewModel()) {
     val isFilterDialogOpen by viewModel.isFilterDialogOpen.collectAsState(initial = false)
     val filteredSpells by viewModel.filteredSpells.collectAsState()
     val spellFilters by viewModel.spellFilters.collectAsState()
+    var isActive by rememberSaveable { mutableStateOf(false) }
 
     Column {
-        Row(modifier = Modifier.background(color = MaterialTheme.colorScheme.surfaceVariant)) {
-            SpellsSearchBar(
-                modifier = Modifier.weight(1f),
-                searchBarText = viewModel.searchBarText.collectAsState().value,
-                onSearchBarTextChange = viewModel::onSearchBarTextChange
+        SpellsSearchBar(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            query = viewModel.searchBarText.collectAsState().value,
+            onQueryChange = viewModel::onSearchBarTextChange,
+            isActive = isActive,
+            setActiveStateTo = { isActive = it },
+            setFilterDialogVisibilityStateTo = viewModel::setFilterDialogVisibilityStateTo
+        ) {
+            Text(
+                text = stringResource(R.string.x_spells_found, filteredSpells.count()),
+                modifier = Modifier
+                    .padding(horizontal = 24.dp)
+                    .align(Alignment.End)
             )
-            IconButton(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                onClick = { viewModel.setFilterDialogVisibilityStateTo(true) }) {
-                Icon(Icons.Filled.Menu, contentDescription = "Filter spells")
+            LazyColumn {
+                items(filteredSpells) { spell ->
+                    SpellTitle(spell, modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp))
+                }
             }
         }
+
         if (filteredSpells.isEmpty())
             Text(
                 text = stringResource(R.string.no_spells_found),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
                     .padding(32.dp)
+                    .align(Alignment.CenterHorizontally)
             )
         else {
             LazyColumn {
@@ -119,7 +121,11 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = viewModel()) {
                         }
                     }
                     Divider(modifier = Modifier.padding(8.dp))
-                    FilterCategory(R.string.source_book, Icons.Default.Star, spellFilters.sourceBookFilters) { toggle ->
+                    FilterCategory(
+                        R.string.source_book,
+                        Icons.Default.Star,
+                        spellFilters.sourceBookFilters
+                    ) { toggle ->
                         viewModel.updateSpellFilters(spellFilters.sourceBookFilters, toggle) {
                             spellFilters.copy(sourceBookFilters = it)
                         }
@@ -128,36 +134,6 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = viewModel()) {
             }
         }
     }
-}
-
-// Experimental api is for the keyboard controller
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun SpellsSearchBar(modifier: Modifier, searchBarText: String, onSearchBarTextChange: (String) -> Unit) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-
-    TextField(
-        modifier = modifier,
-        value = searchBarText,
-        onValueChange = onSearchBarTextChange,
-        placeholder = { Text(text = stringResource(R.string.spell_search_hint)) },
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        keyboardActions = KeyboardActions(
-            onSearch = {
-                focusManager.clearFocus()
-                keyboardController?.hide()
-            }),
-        leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
-        trailingIcon = {
-            if (searchBarText.isNotEmpty()) {
-                IconButton(onClick = { onSearchBarTextChange("") }) {
-                    Icon(Icons.Filled.Clear, contentDescription = "Clear the search bar.")
-                }
-            }
-        }
-    )
 }
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
