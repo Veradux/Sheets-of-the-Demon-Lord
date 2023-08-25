@@ -24,10 +24,17 @@ data class Spell(
         const val DURATION = "Duration"
     }
 
+    fun getPropertiesList() = listOf(requirement, area, target, duration).filter { it.isNotEmpty() }
+
     fun getPropertiesText(): String =
         listOf(requirement, area, target, duration)
             .filter { it.isNotEmpty() }
             .joinToString(separator = "\n")
+
+    fun containsText(text: String): Boolean =
+        listOf(name, tradition, requirement, area, target, duration, description).any {
+            it.lowercase().contains(text.lowercase())
+        }
 
     companion object {
 
