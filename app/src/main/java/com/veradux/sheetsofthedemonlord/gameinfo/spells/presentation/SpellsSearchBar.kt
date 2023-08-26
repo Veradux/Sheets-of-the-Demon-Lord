@@ -1,5 +1,6 @@
 package com.veradux.sheetsofthedemonlord.gameinfo.spells.presentation
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
@@ -35,16 +36,17 @@ fun SpellsSearchBar(
         active = isActive,
         onActiveChange = setActiveStateTo,
         placeholder = { Text(text = stringResource(R.string.spell_search_hint)) },
-        leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
+        leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search bar.") },
         trailingIcon = {
             Row {
-                if (query.isNotEmpty()) {
+                AnimatedVisibility (query.isNotEmpty()) {
                     IconButton(onClick = { onQueryChange("") }) {
                         Icon(Icons.Filled.Clear, contentDescription = "Clear the search bar.")
                     }
                 }
                 IconButton(
                     onClick = { setFilterDialogVisibilityStateTo(true) }) {
+                    // TODO replace the placeholder icon with a filter icon
                     Icon(Icons.Filled.Menu, contentDescription = "Filter spells.")
                 }
             }
