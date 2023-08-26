@@ -1,6 +1,7 @@
 package com.veradux.sheetsofthedemonlord.gameinfo.spells.presentation
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -69,7 +70,7 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = viewModel()) {
             }
         }
 
-        if (filteredSpells.isEmpty())
+        AnimatedVisibility(filteredSpells.isEmpty()) {
             Text(
                 text = stringResource(R.string.no_spells_found),
                 textAlign = TextAlign.Center,
@@ -77,7 +78,8 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = viewModel()) {
                     .padding(32.dp)
                     .align(Alignment.CenterHorizontally)
             )
-        else {
+        }
+        AnimatedVisibility(filteredSpells.isNotEmpty()) {
             LazyColumn {
                 items(filteredSpells) { Spell(it) }
             }
