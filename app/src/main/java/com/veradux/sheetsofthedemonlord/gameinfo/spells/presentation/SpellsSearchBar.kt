@@ -25,7 +25,7 @@ fun SpellsSearchBar(
     onQueryChange: (String) -> Unit,
     isActive: Boolean,
     setActiveStateTo: (Boolean) -> Unit,
-    setFilterDialogVisibilityStateTo: (Boolean) -> Unit,
+    onOpenDialogEvent: () -> Unit,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     SearchBar(
@@ -45,7 +45,7 @@ fun SpellsSearchBar(
                     }
                 }
                 IconButton(
-                    onClick = { setFilterDialogVisibilityStateTo(true) }) {
+                    onClick = onOpenDialogEvent ) {
                     // TODO replace the placeholder icon with a filter icon
                     Icon(Icons.Filled.Menu, contentDescription = "Filter spells.")
                 }

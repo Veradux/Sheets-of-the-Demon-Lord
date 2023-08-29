@@ -46,13 +46,14 @@ class SpellsScreenViewModel(
         _spellFilters.value = copyFilters(mutableToggles)
     }
 
-    fun setFilterDialogVisibilityStateTo(isVisible: Boolean) {
-        _isFilterDialogOpen.value = isVisible
-        if (!isVisible) {
-            // TODO instead of always filtering the spells every time the screen closes,
-            //  do it only when the spell filters change
-            _filteredSpells.value = getFilteredSpells()
-        }
+    fun onDialogClose(newSpellFilterCategories: SpellFilterCategories) {
+        _isFilterDialogOpen.value = false
+        _spellFilters.value = newSpellFilterCategories
+        _filteredSpells.value = getFilteredSpells()
+    }
+
+    fun onOpenDialogEvent() {
+        _isFilterDialogOpen.value = true
     }
 
     private fun getFilteredSpells(): List<Spell> = allSpells.filter { spell ->

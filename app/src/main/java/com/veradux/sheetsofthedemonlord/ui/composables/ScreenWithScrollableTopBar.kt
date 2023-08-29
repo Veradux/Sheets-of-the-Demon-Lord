@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -37,7 +38,7 @@ fun ScreenWithScrollableTopBar(
     content: @Composable (BoxScope.(PaddingValues) -> Unit)
 ) {
     val searchBarHeightPx = with(LocalDensity.current) { topBarHeight.roundToPx().toFloat() }
-    val searchBarOffsetHeightPx = remember { mutableStateOf(0f) }
+    val searchBarOffsetHeightPx = rememberSaveable { mutableStateOf(0f) }
 
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {

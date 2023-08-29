@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
@@ -24,7 +25,7 @@ fun SheetsOfTheDemonLordApp() {
     Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) { paddingValues ->
         Surface(modifier = Modifier.padding(paddingValues), color = MaterialTheme.colorScheme.background) {
             val navController = rememberNavController()
-            val selectedScreenState = remember { mutableStateOf(CharactersScreen.LIST) }
+            val selectedScreenState = rememberSaveable { mutableStateOf(CharactersScreen.LIST) }
             DemonLordNavigationDrawer(navController, snackBarHostState, selectedScreenState) {
                 NavHost(navController = navController, startDestination = CharactersScreen.ROUTE) {
 
