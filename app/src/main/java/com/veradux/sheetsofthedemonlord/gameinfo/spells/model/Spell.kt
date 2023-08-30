@@ -1,17 +1,45 @@
-package com.veradux.sheetsofthedemonlord.gameinfo.model
+package com.veradux.sheetsofthedemonlord.gameinfo.spells.model
 
 data class Spell(
     val name: String,
     val tradition: String,
     val type: Type,
     val level: Int,
-    val description: String
+    val requirement: String = "",
+    val area: String = "",
+    val target: String = "",
+    val duration: String = "",
+    val description: String,
+    val sourceBook: String
 ) {
+
     enum class Type {
         UTILITY, ATTACK
     }
 
+    object Property {
+        const val REQUIREMENT = "Requirement"
+        const val TARGET = "Target"
+        const val AREA = "Area"
+        const val DURATION = "Duration"
+    }
+
+    fun getPropertiesList() = listOf(requirement, area, target, duration).filter { it.isNotEmpty() }
+
+    fun getPropertiesText(): String =
+        listOf(requirement, area, target, duration)
+            .filter { it.isNotEmpty() }
+            .joinToString(separator = "\n")
+
+    fun containsText(text: String): Boolean =
+        listOf(name, tradition, requirement, area, target, duration, description).any {
+            it.lowercase().contains(text.lowercase())
+        }
+
     companion object {
+
+        val descriptionKeywords = listOf("Triggered", "Sacrifice", "Permanence", "Attack Roll 20+")
+        val propertyKeywords = listOf(Property.REQUIREMENT, Property.TARGET, Property.AREA, Property.DURATION)
 
         data class Tradition(
             val name: String,
@@ -58,5 +86,4 @@ data class Spell(
             Tradition("Water", Tradition.Attribute.WILL),
         )
     }
-
 }
