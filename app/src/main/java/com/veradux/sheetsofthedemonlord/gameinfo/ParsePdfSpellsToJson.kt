@@ -64,7 +64,7 @@ fun getSpellsFromLines(lines: List<String>): List<Spell> {
                 // or that there are spell types other than ATTACK and UTILITY.
                 type = spellType!!,
                 level = spellTitle.last().digitToInt(),
-                description = spellDescription ?: "oof"
+                description = spellDescription!!
             )
         )
 
