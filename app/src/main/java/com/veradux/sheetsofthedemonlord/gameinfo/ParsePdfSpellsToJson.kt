@@ -6,12 +6,12 @@ import java.io.InputStream
 import java.util.Locale
 
 // TODO exceptions in the pdf to prepare for, when putting the data on the UI:
-//  1. The chaos spell called Wild Magic has a random d20 roll table in it. It will have to be fixed manually.
-//  2. Conjuration has a snippet of rules which will be incorrectly added to the Conjure Weapon spell automatically.
+//  1. The BOLSTER DEFENSE spell has : after target and duration. If you recopy the text file, REMEMBER to fix this again.
+//  2. Find and replace all instances of ’ with ' if you recopy the text file.
+//  3. The chaos spell called Wild Magic has a random d20 roll table in it. It will have to be fixed manually.
+//  4. Conjuration has a snippet of rules which will be incorrectly added to the Conjure Weapon spell automatically.
 //  Instead it should be moved to the tradition description. Look for other similar cases.
-//  3. STRIKE LIKE LIGHTNING area property is broken because it has a capital letter in it ( the word Speed), fix manually.
-//  4. The BOLSTER DEFENSE spell has : after target and duration. If you recopy the text file, REMEMBER to fix this again.
-//  5. Find and replace all instances of ’ with ' if you recopy the text file.
+//  5. STRIKE LIKE LIGHTNING area property is broken because it has a capital letter in it ( the word Speed), fix manually.
 
 fun parsePdfSpells(input: InputStream, sourceBook: String): List<Spell> {
     val plainTextLines = readInputStream(input)
@@ -60,11 +60,11 @@ fun getSpellsFromLines(lines: List<String>, sourceBook: String): List<Spell> {
         val targetProperty = spellText.findSpellProperty(Spell.Property.TARGET)
         val durationProperty = spellText.findSpellProperty(Spell.Property.DURATION)
 
+        // remove all property text from the spell description text
         var spellDescription = spellText.replace("  ", " ")
-            .replace(requirementProperty, "")
-            .replace(areaProperty, "")
-            .replace(targetProperty, "")
-            .replace(durationProperty, "")
+        listOfNotNull(requirementProperty, areaProperty, targetProperty, durationProperty).forEach {
+            spellDescription = spellDescription.replace(it, "")
+        }
 
         // put description keywords on a new line, except if they are the first line
         Spell.descriptionKeywords
@@ -101,16 +101,15 @@ fun getSpellsFromLines(lines: List<String>, sourceBook: String): List<Spell> {
     return spells
 }
 
-private fun String.findSpellProperty(propertyKeyword: String): String {
-    return if (contains(propertyKeyword)) {
+private fun String.findSpellProperty(propertyKeyword: String): String? =
+    if (contains(propertyKeyword)) {
         val descriptionAfterKeyword = substring(indexOf(propertyKeyword) + propertyKeyword.length + 2)
         val firstCapitalLetter = descriptionAfterKeyword.first { it in 'A'..'Z' }
         val capitalLetterIndex = descriptionAfterKeyword.indexOf(firstCapitalLetter)
         val textAfterCapitalLetter = descriptionAfterKeyword.substring(capitalLetterIndex)
         val indexAfterProperty = indexOf(textAfterCapitalLetter)
-        substring(indexOf(propertyKeyword), indexAfterProperty)
-    } else ""
-}
+        substring(indexOf(propertyKeyword), indexAfterProperty).trim()
+    } else null
 
 private fun readInputStream(inputStream: InputStream): List<String> {
     val reader = BufferedReader(inputStream.reader())
