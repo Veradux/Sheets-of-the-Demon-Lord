@@ -40,7 +40,7 @@ fun Spell(spell: Spell) {
         Divider(modifier = Modifier.padding(vertical = 4.dp))
 
         // spell properties
-        spell.getPropertiesText().let {
+        spell.propertiesText().let {
             if (it.isNotEmpty()) {
                 Text(text = makeKeywordsBold(it, Spell.propertyKeywords))
                 Divider(modifier = Modifier.padding(vertical = 4.dp))

@@ -13,6 +13,18 @@ data class Spell(
     val duration: String? = null
 ) {
 
+    /**
+     * The empty constructor is necessary for the firebase deserialization.
+     */
+    constructor() : this(
+        name = "",
+        tradition = "",
+        type = Type.ATTACK,
+        level = 0,
+        description = "",
+        sourceBook = ""
+    )
+
     enum class Type {
         UTILITY, ATTACK
     }
@@ -34,10 +46,10 @@ data class Spell(
         }
     }
 
-    fun getPropertiesList(): List<String> =
+    fun propertiesList(): List<String> =
         listOfNotNull(requirement, area, target, duration)
 
-    fun getPropertiesText(): String =
+    fun propertiesText(): String =
         listOfNotNull(requirement, area, target, duration).joinToString(separator = "\n")
 
     fun containsText(text: String): Boolean =

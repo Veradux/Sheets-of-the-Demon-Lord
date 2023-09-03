@@ -3,19 +3,19 @@ package com.veradux.sheetsofthedemonlord.gameinfo.spells.presentation
 import androidx.lifecycle.ViewModel
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellFiltersRepository
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellFiltersRepositoryMock
-import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellsRepository
-import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellsRepositoryMock
+import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellsApi
+import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellsFirebaseApi
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.Spell
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.SpellFilterCategories
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class SpellsScreenViewModel(
-    spellsRepository: SpellsRepository = SpellsRepositoryMock(),
+    spellsApi: SpellsApi = SpellsFirebaseApi(),
     spellFiltersRepository: SpellFiltersRepository = SpellFiltersRepositoryMock()
 ) : ViewModel() {
 
-    private val allSpells = spellsRepository.getSpells()
+    private lateinit var allSpells: List<Spell>
 
     // states
     private val _isFilterDialogOpen = MutableStateFlow(false)
@@ -29,6 +29,12 @@ class SpellsScreenViewModel(
 
     private val _searchBarText = MutableStateFlow("")
     val searchBarText = _searchBarText.asStateFlow()
+
+    init {
+        spellsApi.getSpells {
+            allSpells = it.getOrNull() ?: emptyList()
+        }
+    }
 
     fun onSearchBarTextChange(text: String) {
         _searchBarText.value = text
