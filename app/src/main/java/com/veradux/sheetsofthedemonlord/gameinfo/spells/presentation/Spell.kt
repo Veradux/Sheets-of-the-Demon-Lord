@@ -1,13 +1,10 @@
 package com.veradux.sheetsofthedemonlord.gameinfo.spells.presentation
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -16,34 +13,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.Spell
 
 @Composable
 fun Spell(spell: Spell) {
-    Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)) {
-        // spell title
-        Row {
-            Text(
-                text = spell.name,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.weight(1f),
-                fontSize = 18.sp,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Text(
-                text = " ${spell.tradition} ${spell.type} ${spell.level}",
-                modifier = Modifier.align(Alignment.Bottom)
-            )
-        }
-
-        Divider(modifier = Modifier.padding(vertical = 4.dp))
+    Column(Modifier.padding(horizontal = 24.dp, vertical = 12.dp)) {
+        SpellTitle(spell)
+        Divider(Modifier.padding(vertical = 4.dp))
 
         // spell properties
         spell.propertiesText().let {
             if (it.isNotEmpty()) {
-                Text(text = makeKeywordsBold(it, Spell.propertyKeywords))
-                Divider(modifier = Modifier.padding(vertical = 4.dp))
+                Text(makeKeywordsBold(it, Spell.propertyKeywords))
+                Divider(Modifier.padding(vertical = 4.dp))
             }
         }
 
