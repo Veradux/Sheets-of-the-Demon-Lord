@@ -7,6 +7,7 @@ import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellsApi
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellsFirebaseApi
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.Spell
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.SpellFilterCategories
+import com.veradux.sheetsofthedemonlord.util.ResultState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -15,13 +16,16 @@ class SpellsScreenViewModel(
     spellFiltersRepository: SpellFiltersRepository = SpellFiltersRepositoryMock()
 ) : ViewModel() {
 
-    private lateinit var allSpells: List<Spell>
+    private val _allSpells: MutableStateFlow<ResultState<List<Spell>>> = MutableStateFlow(ResultState.Loading())
+
+    // TODO use the result state to show a loading animation or an error message
+    val allSpells = _allSpells.asStateFlow()
 
     // states
     private val _isFilterDialogOpen = MutableStateFlow(false)
     val isFilterDialogOpen = _isFilterDialogOpen.asStateFlow()
 
-    private val _filteredSpells = MutableStateFlow(allSpells)
+    private val _filteredSpells = MutableStateFlow(emptyList<Spell>())
     val filteredSpells = _filteredSpells.asStateFlow()
 
     private val _spellFilters = MutableStateFlow(spellFiltersRepository.getSpellFilters())
@@ -32,7 +36,10 @@ class SpellsScreenViewModel(
 
     init {
         spellsApi.getSpells {
-            allSpells = it.getOrNull() ?: emptyList()
+            _allSpells.value = it
+            if (it is ResultState.Received) {
+                _filteredSpells.value = it.result
+            }
         }
     }
 
@@ -61,7 +68,12 @@ class SpellsScreenViewModel(
         }
     }
 
-    private fun getFilteredSpells(): List<Spell> = allSpells.filter { spell ->
-        spell.containsText(searchBarText.value) && spellFilters.value.filter(spell)
+    private fun getFilteredSpells(): List<Spell> {
+        return when (val spellsState = allSpells.value) {
+            is ResultState.Received<List<Spell>> -> spellsState.result.filter { spell ->
+                spell.containsText(searchBarText.value) && spellFilters.value.filter(spell)
+            }
+            else -> emptyList()
+        }
     }
 }
