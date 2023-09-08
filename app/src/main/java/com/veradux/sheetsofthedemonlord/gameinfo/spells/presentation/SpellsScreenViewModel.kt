@@ -1,15 +1,12 @@
 package com.veradux.sheetsofthedemonlord.gameinfo.spells.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellFiltersApi
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellFiltersApiMock
-import androidx.lifecycle.viewModelScope
-import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellFiltersRepository
-import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellFiltersRepositoryMock
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellsApi
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellsFirebaseApi
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.Spell
-import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.SpellFilterCategories
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -65,17 +62,6 @@ class SpellsScreenViewModel(
 
     fun onSearchQueryChange(text: String) {
         _searchQuery.value = text
-    }
-
-    fun updateSpellFilters(
-        filters: List<SpellFilterCategories.Filter>,
-        newFilter: SpellFilterCategories.Filter,
-        copyFilters: (List<SpellFilterCategories.Filter>) -> SpellFilterCategories
-    ) {
-        val mutableToggles = filters.toMutableList()
-        mutableToggles[mutableToggles.indexOf(newFilter)] =
-            SpellFilterCategories.Filter(newFilter.name, !newFilter.isEnabled)
-        _spellFilters.value = copyFilters(mutableToggles)
     }
 
     fun setFilterDialogVisibilityTo(isVisible: Boolean) {
