@@ -17,4 +17,5 @@
     <string name="no_spells_found">No spells found. Try searching for something else or turning off some filters.</string>
     <string name="x_spells_found">"%1$d spells found."</string>
     <string name="filter_dialog_screen_title">Filter spells</string>
+    <string name="error_loading_spells">Failed to download the spells!</string>
 </resources>

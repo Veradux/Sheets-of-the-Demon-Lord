@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "779534092454",
+    "firebase_url": "https://sheets-of-the-demon-lord-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "sheets-of-the-demon-lord",
+    "storage_bucket": "sheets-of-the-demon-lord.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:779534092454:android:8fa67585feeaa92a354c67",
+        "android_client_info": {
+          "package_name": "com.veradux.sheetsofthedemonlord"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "779534092454-3esd2bfhgeb4cq7upl9rmsljfmoo91et.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4hHeGN8BEQoHWYCy2ZfBV79z-OajuoJc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "779534092454-3esd2bfhgeb4cq7upl9rmsljfmoo91et.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

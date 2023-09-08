@@ -16,7 +16,7 @@ data class SpellFilterCategories(
         val hasTradition = traditionFilters.anyMatch(spell.tradition.capitalize())
         val isLevel = levelFilters.anyMatch(spell.level.toString())
         val hasBook = sourceBookFilters.anyMatch(spell.sourceBook)
-        val hasProperties = spell.getPropertiesList().any { propertyFilters.anyMatch(it) }
+        val hasProperties = spell.propertiesList().any { propertyFilters.anyMatch(it) }
         return hasTradition && isLevel && hasBook && hasProperties
     }
 

@@ -22,7 +22,7 @@ fun Spell(spell: Spell) {
         Divider(Modifier.padding(vertical = 4.dp))
 
         // spell properties
-        spell.getPropertiesText().let {
+        spell.propertiesText().let {
             if (it.isNotEmpty()) {
                 Text(makeKeywordsBold(it, Spell.propertyKeywords))
                 Divider(Modifier.padding(vertical = 4.dp))

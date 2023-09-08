@@ -5,13 +5,25 @@ data class Spell(
     val tradition: String,
     val type: Type,
     val level: Int,
-    val requirement: String = "",
-    val area: String = "",
-    val target: String = "",
-    val duration: String = "",
     val description: String,
-    val sourceBook: String
+    val sourceBook: String,
+    val requirement: String? = null,
+    val area: String? = null,
+    val target: String? = null,
+    val duration: String? = null
 ) {
+
+    /**
+     * The empty constructor is necessary for the firebase deserialization.
+     */
+    constructor() : this(
+        name = "",
+        tradition = "",
+        type = Type.ATTACK,
+        level = 0,
+        description = "",
+        sourceBook = ""
+    )
 
     enum class Type {
         UTILITY, ATTACK
@@ -24,32 +36,30 @@ data class Spell(
         const val DURATION = "Duration"
     }
 
-    fun getPropertiesList() = listOf(requirement, area, target, duration).filter { it.isNotEmpty() }
+    data class Tradition(
+        val name: String,
+        val attribute: Attribute,
+        var description: String = "",
+    ) {
+        enum class Attribute {
+            INTELLECT, WILL
+        }
+    }
 
-    fun getPropertiesText(): String =
-        listOf(requirement, area, target, duration)
-            .filter { it.isNotEmpty() }
-            .joinToString(separator = "\n")
+    fun propertiesList(): List<String> =
+        listOfNotNull(requirement, area, target, duration)
+
+    fun propertiesText(): String =
+        listOfNotNull(requirement, area, target, duration).joinToString(separator = "\n")
 
     fun containsText(text: String): Boolean =
-        listOf(name, tradition, requirement, area, target, duration, description).any {
+        listOfNotNull(name, tradition, requirement, area, target, duration, description).any {
             it.lowercase().contains(text.lowercase())
         }
 
     companion object {
-
         val descriptionKeywords = listOf("Triggered", "Sacrifice", "Permanence", "Attack Roll 20+")
         val propertyKeywords = listOf(Property.REQUIREMENT, Property.TARGET, Property.AREA, Property.DURATION)
-
-        data class Tradition(
-            val name: String,
-            val attribute: Attribute,
-            var description: String = "",
-        ) {
-            enum class Attribute {
-                INTELLECT, WILL
-            }
-        }
 
         // TODO this map is temporary and will be used to convert to json later and put in a data base,
         //  after which the hardcoded list will be removed, and it will be read from the DB instead.

@@ -3,36 +3,68 @@ package com.veradux.sheetsofthedemonlord.gameinfo.spells.presentation
 import androidx.lifecycle.ViewModel
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellFiltersApi
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellFiltersApiMock
-import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellsRepository
-import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellsRepositoryMock
+import androidx.lifecycle.viewModelScope
+import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellFiltersRepository
+import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellFiltersRepositoryMock
+import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellsApi
+import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellsFirebaseApi
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.Spell
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.SpellFilterCategories
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.stateIn
 
 class SpellsScreenViewModel(
-    spellsRepository: SpellsRepository = SpellsRepositoryMock(),
+    spellsApi: SpellsApi = SpellsFirebaseApi(),
     spellFiltersApi: SpellFiltersApi = SpellFiltersApiMock()
 ) : ViewModel() {
 
-    private val allSpells = spellsRepository.getSpells()
+    enum class AllSpellsState {
+        LOADING, LOADED, ERROR
+    }
 
-    // states
+    private val _allSpellsState = MutableStateFlow(AllSpellsState.LOADING)
+    val allSpellsState = _allSpellsState.asStateFlow()
+
+    private val _allSpells = MutableStateFlow(emptyList<Spell>())
+
     private val _isFilterDialogOpen = MutableStateFlow(false)
     val isFilterDialogOpen = _isFilterDialogOpen.asStateFlow()
-
-    private val _filteredSpells = MutableStateFlow(allSpells)
-    val filteredSpells = _filteredSpells.asStateFlow()
 
     private val _spellFilters = MutableStateFlow(spellFiltersApi.getSpellFilters())
     val spellFilters = _spellFilters.asStateFlow()
 
-    private val _searchBarText = MutableStateFlow("")
-    val searchBarText = _searchBarText.asStateFlow()
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery = _searchQuery.asStateFlow()
 
-    fun onSearchBarTextChange(text: String) {
-        _searchBarText.value = text
-        _filteredSpells.value = getFilteredSpells()
+    private val _filteredSpells = MutableStateFlow(emptyList<Spell>())
+    val filteredSpells = _searchQuery
+        // TODO check if filtering the search query still works when spellFilters changes.
+        .filter { it.length < 3 }
+        .combine(spellFilters) { query, filters ->
+            _allSpells.value.filter { spell ->
+                spell.containsText(query) && filters.filter(spell)
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.Lazily, _allSpells.value)
+
+    init {
+        spellsApi.getSpells {
+            if (it == null) {
+                _allSpellsState.value = AllSpellsState.ERROR
+            } else {
+                _filteredSpells.value = it
+                _allSpells.value = it
+                _allSpellsState.value = AllSpellsState.LOADED
+            }
+        }
+    }
+
+    fun onSearchQueryChange(text: String) {
+        _searchQuery.value = text
     }
 
     fun updateSpellFilters(
@@ -46,17 +78,7 @@ class SpellsScreenViewModel(
         _spellFilters.value = copyFilters(mutableToggles)
     }
 
-    fun onDialogClose(newSpellFilterCategories: SpellFilterCategories) {
-        _isFilterDialogOpen.value = false
-        _spellFilters.value = newSpellFilterCategories
-        _filteredSpells.value = getFilteredSpells()
-    }
-
-    fun onOpenDialogEvent() {
-        _isFilterDialogOpen.value = true
-    }
-
-    private fun getFilteredSpells(): List<Spell> = allSpells.filter { spell ->
-        spell.containsText(searchBarText.value) && spellFilters.value.filter(spell)
+    fun setFilterDialogVisibilityTo(isVisible: Boolean) {
+        _isFilterDialogOpen.value = isVisible
     }
 }
