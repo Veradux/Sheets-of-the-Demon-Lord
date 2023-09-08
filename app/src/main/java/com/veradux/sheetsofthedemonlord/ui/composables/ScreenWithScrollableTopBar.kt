@@ -61,7 +61,7 @@ fun ScreenWithScrollableTopBar(
 
 @Preview
 @Composable
-fun TestPreview() {
+fun ScreenWithScrollableTopBarPreview() {
     ScreenWithScrollableTopBar(
         topBarHeight = 64.dp,
         topBar = {

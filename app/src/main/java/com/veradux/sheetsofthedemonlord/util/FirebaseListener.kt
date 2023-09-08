@@ -1,5 +1,6 @@
 package com.veradux.sheetsofthedemonlord.util
 
+import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -7,27 +8,22 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 
-inline fun <reified Resource> addFirebaseListener(
-    path: String,
-    crossinline onResult: (ResultState<Resource>) -> Unit
-) {
-    onResult(ResultState.Loading())
-    val database = Firebase.database.reference
-
-    val spellsListener = object : ValueEventListener {
+inline fun <reified T> addFirebaseListener(path: String, crossinline onResult: (T?) -> Unit) {
+    Firebase.database.reference.child(path).addListenerForSingleValueEvent(object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
-            val result = dataSnapshot.getValue<Resource>()
-            if (result != null) {
-                onResult(ResultState.Received(result))
-            } else {
-                onResult(ResultState.Empty())
+            val result = dataSnapshot.getValue<T>()
+            if (result == null) {
+                Firebase.analytics.logEvent(
+                    "Could not find data for \"$path\" of type \"${T::class.java.simpleName}\"",
+                    null
+                )
             }
+            onResult(result)
         }
 
         override fun onCancelled(databaseError: DatabaseError) {
-            onResult(ResultState.Failed(databaseError.toException()))
+            onResult(null)
+            Firebase.analytics.logEvent(databaseError.toException().stackTraceToString(), null)
         }
-    }
-
-    database.child(path).addListenerForSingleValueEvent(spellsListener)
+    })
 }

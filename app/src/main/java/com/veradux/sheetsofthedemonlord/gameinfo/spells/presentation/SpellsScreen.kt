@@ -1,7 +1,7 @@
 package com.veradux.sheetsofthedemonlord.gameinfo.spells.presentation
 
 import androidx.annotation.StringRes
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -41,11 +42,13 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.veradux.sheetsofthedemonlord.R
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.SpellFilterCategories
+import com.veradux.sheetsofthedemonlord.gameinfo.spells.presentation.SpellsScreenViewModel.AllSpellsState
 import com.veradux.sheetsofthedemonlord.ui.composables.ScreenWithScrollableTopBar
 
 @Composable
 fun SpellsScreen(viewModel: SpellsScreenViewModel = viewModel()) {
     val isFilterDialogOpen by viewModel.isFilterDialogOpen.collectAsState(initial = false)
+    val spellsState by viewModel.allSpellsState.collectAsState()
     val filteredSpells by viewModel.filteredSpells.collectAsState()
     val spellFilters by viewModel.spellFilters.collectAsState()
     var isActive by rememberSaveable { mutableStateOf(false) }
@@ -57,45 +60,31 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = viewModel()) {
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .offset { offset },
-                query = viewModel.searchBarText.collectAsState().value,
-                onQueryChange = viewModel::onSearchBarTextChange,
+                query = viewModel.searchQuery.collectAsState().value,
+                onQueryChange = viewModel::onSearchQueryChange,
                 isActive = isActive,
                 setActiveStateTo = { isActive = it },
-                setFilterDialogVisibilityStateTo = viewModel::setFilterDialogVisibilityStateTo
-            ) {
-                Text(
-                    text = stringResource(R.string.x_spells_found, filteredSpells.count()),
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp)
-                        .align(Alignment.End)
-                )
-                LazyColumn {
-                    items(filteredSpells) { spell ->
-                        SpellTitle(spell, modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp))
-                    }
-                }
-            }
-        }
-    ) { paddingValues ->
-        AnimatedVisibility(filteredSpells.isEmpty()) {
-            Text(
-                text = stringResource(R.string.no_spells_found),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .padding(horizontal = 32.dp, vertical = 120.dp)
-                    .align(Alignment.Center)
+                onFilterButtonClick = { viewModel.setFilterDialogVisibilityTo(true) },
+                spells = filteredSpells
             )
         }
-        // TODO fix enter transition
-        AnimatedVisibility(filteredSpells.isNotEmpty()) {
-            LazyColumn(contentPadding = paddingValues) {
-                items(filteredSpells) { Spell(it) }
-            }
+    ) { paddingValues ->
+        when (spellsState) {
+            AllSpellsState.ERROR -> SpellsScreenMessage(R.string.error_loading_spells)
+            AllSpellsState.LOADING -> CircularProgressIndicator(Modifier.align(Alignment.Center))
+            AllSpellsState.LOADED ->
+                if (filteredSpells.isNotEmpty()) {
+                    LazyColumn(contentPadding = paddingValues) {
+                        items(filteredSpells) { Spell(it) }
+                    }
+                } else {
+                    SpellsScreenMessage(R.string.no_spells_found)
+                }
         }
 
         if (isFilterDialogOpen) {
             Dialog(
-                onDismissRequest = { viewModel.setFilterDialogVisibilityStateTo(false) },
+                onDismissRequest = { viewModel.setFilterDialogVisibilityTo(false) },
                 properties = DialogProperties(usePlatformDefaultWidth = false)
             ) {
                 Surface {
@@ -107,7 +96,7 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = viewModel()) {
                     ) {
                         IconButton(
                             modifier = Modifier.align(Alignment.End),
-                            onClick = { viewModel.setFilterDialogVisibilityStateTo(false) }) {
+                            onClick = { viewModel.setFilterDialogVisibilityTo(false) }) {
                             Icon(Icons.Filled.Menu, contentDescription = "Filter spells")
                         }
 
@@ -154,6 +143,18 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = viewModel()) {
     }
 }
 
+@Composable
+private fun BoxScope.SpellsScreenMessage(@StringRes messageId: Int) {
+    Text(
+        text = stringResource(messageId),
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .padding(horizontal = 32.dp, vertical = 120.dp)
+            .align(Alignment.Center)
+    )
+}
+
+// the experimental material 3 api is for the FlowRow and FilterChip
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun FilterCategory(

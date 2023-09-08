@@ -1,51 +1,68 @@
 package com.veradux.sheetsofthedemonlord.gameinfo.spells.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellFiltersRepository
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellFiltersRepositoryMock
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellsApi
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellsFirebaseApi
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.Spell
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.SpellFilterCategories
-import com.veradux.sheetsofthedemonlord.util.ResultState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.stateIn
 
 class SpellsScreenViewModel(
     spellsApi: SpellsApi = SpellsFirebaseApi(),
     spellFiltersRepository: SpellFiltersRepository = SpellFiltersRepositoryMock()
 ) : ViewModel() {
 
-    private val _allSpells: MutableStateFlow<ResultState<List<Spell>>> = MutableStateFlow(ResultState.Loading())
+    enum class AllSpellsState {
+        LOADING, LOADED, ERROR
+    }
 
-    // TODO use the result state to show a loading animation or an error message
-    val allSpells = _allSpells.asStateFlow()
+    private val _allSpellsState = MutableStateFlow(AllSpellsState.LOADING)
+    val allSpellsState = _allSpellsState.asStateFlow()
 
-    // states
+    private val _allSpells = MutableStateFlow(emptyList<Spell>())
+
     private val _isFilterDialogOpen = MutableStateFlow(false)
     val isFilterDialogOpen = _isFilterDialogOpen.asStateFlow()
-
-    private val _filteredSpells = MutableStateFlow(emptyList<Spell>())
-    val filteredSpells = _filteredSpells.asStateFlow()
 
     private val _spellFilters = MutableStateFlow(spellFiltersRepository.getSpellFilters())
     val spellFilters = _spellFilters.asStateFlow()
 
-    private val _searchBarText = MutableStateFlow("")
-    val searchBarText = _searchBarText.asStateFlow()
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery = _searchQuery.asStateFlow()
+
+    private val _filteredSpells = MutableStateFlow(emptyList<Spell>())
+    val filteredSpells = _searchQuery
+        // TODO check if filtering the search query still works when spellFilters changes.
+        .filter { it.length < 3 }
+        .combine(spellFilters) { query, filters ->
+            _allSpells.value.filter { spell ->
+                spell.containsText(query) && filters.filter(spell)
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.Lazily, _allSpells.value)
 
     init {
         spellsApi.getSpells {
-            _allSpells.value = it
-            if (it is ResultState.Received) {
-                _filteredSpells.value = it.result
+            if (it == null) {
+                _allSpellsState.value = AllSpellsState.ERROR
+            } else {
+                _filteredSpells.value = it
+                _allSpells.value = it
+                _allSpellsState.value = AllSpellsState.LOADED
             }
         }
     }
 
-    fun onSearchBarTextChange(text: String) {
-        _searchBarText.value = text
-        _filteredSpells.value = getFilteredSpells()
+    fun onSearchQueryChange(text: String) {
+        _searchQuery.value = text
     }
 
     fun updateSpellFilters(
@@ -59,21 +76,7 @@ class SpellsScreenViewModel(
         _spellFilters.value = copyFilters(mutableToggles)
     }
 
-    fun setFilterDialogVisibilityStateTo(isVisible: Boolean) {
+    fun setFilterDialogVisibilityTo(isVisible: Boolean) {
         _isFilterDialogOpen.value = isVisible
-        if (!isVisible) {
-            // TODO instead of always filtering the spells every time the screen closes,
-            //  do it only when the spell filters change
-            _filteredSpells.value = getFilteredSpells()
-        }
-    }
-
-    private fun getFilteredSpells(): List<Spell> {
-        return when (val spellsState = allSpells.value) {
-            is ResultState.Received<List<Spell>> -> spellsState.result.filter { spell ->
-                spell.containsText(searchBarText.value) && spellFilters.value.filter(spell)
-            }
-            else -> emptyList()
-        }
     }
 }
