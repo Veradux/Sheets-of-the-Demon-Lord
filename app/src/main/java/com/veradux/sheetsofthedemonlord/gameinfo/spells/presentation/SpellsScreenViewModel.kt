@@ -1,8 +1,8 @@
 package com.veradux.sheetsofthedemonlord.gameinfo.spells.presentation
 
 import androidx.lifecycle.ViewModel
-import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellFiltersRepository
-import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellFiltersRepositoryMock
+import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellFiltersApi
+import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellFiltersApiMock
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellsRepository
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.data.SpellsRepositoryMock
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.Spell
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class SpellsScreenViewModel(
     spellsRepository: SpellsRepository = SpellsRepositoryMock(),
-    spellFiltersRepository: SpellFiltersRepository = SpellFiltersRepositoryMock()
+    spellFiltersApi: SpellFiltersApi = SpellFiltersApiMock()
 ) : ViewModel() {
 
     private val allSpells = spellsRepository.getSpells()
@@ -24,7 +24,7 @@ class SpellsScreenViewModel(
     private val _filteredSpells = MutableStateFlow(allSpells)
     val filteredSpells = _filteredSpells.asStateFlow()
 
-    private val _spellFilters = MutableStateFlow(spellFiltersRepository.getSpellFilters())
+    private val _spellFilters = MutableStateFlow(spellFiltersApi.getSpellFilters())
     val spellFilters = _spellFilters.asStateFlow()
 
     private val _searchBarText = MutableStateFlow("")
