@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.veradux.sheetsofthedemonlord.R
@@ -29,7 +30,6 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = viewModel()) {
     val isFilterDialogOpen by viewModel.isFilterDialogOpen.collectAsState(initial = false)
     val spellsState by viewModel.allSpellsState.collectAsState()
     val filteredSpells by viewModel.filteredSpells.collectAsState()
-    val spellFilters by viewModel.spellFilters.collectAsState()
     var isActive by rememberSaveable { mutableStateOf(false) }
 
     ScreenWithScrollableTopBar(
@@ -62,10 +62,10 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = viewModel()) {
         }
 
         if (isFilterDialogOpen) {
-//            FilterDialog(
-//                spellFilters,
-//                viewModel::onDialogClose
-//            )
+            FilterDialogScreen(
+                filterCategories = viewModel.filterCategories.getFilterCategories(),
+                onDismiss = { viewModel.setFilterDialogVisibilityTo(false) }
+            )
         }
     }
 }
@@ -79,4 +79,10 @@ private fun BoxScope.SpellsScreenMessage(@StringRes messageId: Int) {
             .padding(horizontal = 32.dp, vertical = 120.dp)
             .align(Alignment.Center)
     )
+}
+
+@Preview
+@Composable
+fun SpellScreenPreview() {
+    SpellsScreen()
 }
