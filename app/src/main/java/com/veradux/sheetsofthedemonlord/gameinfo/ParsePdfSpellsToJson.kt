@@ -90,7 +90,7 @@ fun getSpellsFromLines(lines: List<String>, sourceBook: String): List<Spell> {
                 area = areaProperty,
                 target = targetProperty,
                 duration = durationProperty,
-                description = spellDescription,
+                description = spellDescription.trim(),
                 sourceBook = sourceBook
             )
         )

@@ -7,7 +7,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -17,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.veradux.sheetsofthedemonlord.R
@@ -50,8 +50,7 @@ fun SpellsSearchBar(
                     }
                 }
                 IconButton(onClick = onFilterButtonClick) {
-                    // TODO replace the placeholder icon with a filter icon
-                    Icon(Icons.Filled.Menu, contentDescription = "Filter spells.")
+                    Icon(painterResource(R.drawable.round_filter_list_24), contentDescription = "Filter spells.")
                 }
             }
         },
@@ -59,11 +58,14 @@ fun SpellsSearchBar(
             Text(
                 text = stringResource(R.string.x_spells_found, spells.count()),
                 modifier = Modifier
+                    // TODO add vertical padding.
                     .padding(horizontal = 24.dp)
                     .align(Alignment.End)
             )
             LazyColumn {
                 items(spells) { spell ->
+                    // TODO wrap each spell title in a card, and give the card an on click event,
+                    //  which closes the search bar and scrolls the spell list to the clicked spell.
                     SpellTitle(spell, modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp))
                 }
             }

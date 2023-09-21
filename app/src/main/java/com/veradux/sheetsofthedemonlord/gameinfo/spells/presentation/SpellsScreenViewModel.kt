@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.stateIn
 
 class SpellsScreenViewModel(spellsApi: SpellsApi = SpellsFirebaseApi()) : ViewModel() {
 
+    // TODO find a better name for this. Something like SpellsFetchedState maybe?
     enum class AllSpellsState {
         LOADING, LOADED, ERROR
     }
@@ -38,6 +39,9 @@ class SpellsScreenViewModel(spellsApi: SpellsApi = SpellsFirebaseApi()) : ViewMo
             if (!isDialogOpen) {
                 oldFilteredSpells = spells.filter { it.containsText(query) && filterCategories.filter(it) }
             }
+            // TODO despite the result on the screen not changing,
+            //  this still triggers a recomposition of the whole screen by setting a value to filteredSpells.
+            //  Find a way to avoid this.
             oldFilteredSpells
         }.stateIn(viewModelScope, SharingStarted.Lazily, oldFilteredSpells)
 

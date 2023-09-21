@@ -21,6 +21,7 @@ import com.veradux.sheetsofthedemonlord.R
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.SpellFilterCategories
 import com.veradux.sheetsofthedemonlord.ui.composables.FilterCategory
 
+// TODO move this to the generic ui directory and make it have no relation to the spells screen.
 @Composable
 fun FilterDialogScreen(
     filterCategories: List<FilterCategory>,

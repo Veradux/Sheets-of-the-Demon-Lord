@@ -32,9 +32,12 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = viewModel()) {
     val filteredSpells by viewModel.filteredSpells.collectAsState()
     var isActive by rememberSaveable { mutableStateOf(false) }
 
+    // TODO when the search bar is active and you scroll to the bottom, the spells list can be seen.
+    //  Weird bug, but it should be fixed somehow.
     ScreenWithScrollableTopBar(
         topBarHeight = 64.dp,
         topBar = { offset ->
+            // TODO the search bar needs padding.
             SpellsSearchBar(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
@@ -62,6 +65,8 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = viewModel()) {
         }
 
         if (isFilterDialogOpen) {
+            // TODO this screen has an incorrect padding somewhere which causes an offset scroll stretch.
+            //  This can be easily observed on the real device.
             FilterDialogScreen(
                 filterCategories = viewModel.filterCategories.getFilterCategories(),
                 onDismiss = { viewModel.setFilterDialogVisibilityTo(false) }
