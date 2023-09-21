@@ -1,7 +1,6 @@
-package com.veradux.sheetsofthedemonlord.gameinfo.spells.presentation
+package com.veradux.sheetsofthedemonlord.ui.composables
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -19,9 +18,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.veradux.sheetsofthedemonlord.R
 import com.veradux.sheetsofthedemonlord.gameinfo.spells.model.SpellFilterCategories
-import com.veradux.sheetsofthedemonlord.ui.composables.FilterCategory
 
-// TODO move this to the generic ui directory and make it have no relation to the spells screen.
 @Composable
 fun FilterDialogScreen(
     filterCategories: List<FilterCategory>,
@@ -34,23 +31,20 @@ fun FilterDialogScreen(
         Surface {
             Column(
                 modifier = Modifier
-                    .padding(16.dp)
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                Row {
-                    Text(
-                        text = stringResource(R.string.filter_dialog_screen_title),
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
+                Text(
+                    text = stringResource(R.string.filter_dialog_screen_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(16.dp)
+                )
 
                 filterCategories.forEach { category ->
                     FilterCategory(category)
 
                     if (filterCategories.last() != category) {
-                        Divider(Modifier.padding(vertical = 8.dp))
+                        Divider(Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
                     }
                 }
             }

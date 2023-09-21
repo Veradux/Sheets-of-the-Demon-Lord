@@ -1,6 +1,7 @@
 package com.veradux.sheetsofthedemonlord.gameinfo.spells.presentation
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -22,24 +23,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.veradux.sheetsofthedemonlord.R
-import com.veradux.sheetsofthedemonlord.gameinfo.spells.presentation.SpellsScreenViewModel.AllSpellsState
+import com.veradux.sheetsofthedemonlord.gameinfo.spells.presentation.SpellsScreenViewModel.SpellsFetchedState
+import com.veradux.sheetsofthedemonlord.ui.composables.FilterDialogScreen
 import com.veradux.sheetsofthedemonlord.ui.composables.ScreenWithScrollableTopBar
 
 @Composable
 fun SpellsScreen(viewModel: SpellsScreenViewModel = viewModel()) {
     val isFilterDialogOpen by viewModel.isFilterDialogOpen.collectAsState(initial = false)
-    val spellsState by viewModel.allSpellsState.collectAsState()
+    val spellsState by viewModel.spellsFetchedState.collectAsState()
     val filteredSpells by viewModel.filteredSpells.collectAsState()
     var isActive by rememberSaveable { mutableStateOf(false) }
 
-    // TODO when the search bar is active and you scroll to the bottom, the spells list can be seen.
-    //  Weird bug, but it should be fixed somehow.
     ScreenWithScrollableTopBar(
         topBarHeight = 64.dp,
+        isScrollabilityActive = !isActive,
         topBar = { offset ->
-            // TODO the search bar needs padding.
             SpellsSearchBar(
                 modifier = Modifier
+                    .padding(horizontal = if (!isActive) 16.dp else 0.dp)
+                    .animateContentSize()
                     .align(Alignment.TopCenter)
                     .offset { offset },
                 query = viewModel.searchQuery.collectAsState().value,
@@ -52,9 +54,9 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = viewModel()) {
         }
     ) { paddingValues ->
         when (spellsState) {
-            AllSpellsState.ERROR -> SpellsScreenMessage(R.string.error_loading_spells)
-            AllSpellsState.LOADING -> CircularProgressIndicator(Modifier.align(Alignment.Center))
-            AllSpellsState.LOADED ->
+            SpellsFetchedState.ERROR -> SpellsScreenMessage(R.string.error_loading_spells)
+            SpellsFetchedState.LOADING -> CircularProgressIndicator(Modifier.align(Alignment.Center))
+            SpellsFetchedState.LOADED ->
                 if (filteredSpells.isNotEmpty()) {
                     LazyColumn(contentPadding = paddingValues) {
                         items(filteredSpells) { Spell(it) }
@@ -65,8 +67,6 @@ fun SpellsScreen(viewModel: SpellsScreenViewModel = viewModel()) {
         }
 
         if (isFilterDialogOpen) {
-            // TODO this screen has an incorrect padding somewhere which causes an offset scroll stretch.
-            //  This can be easily observed on the real device.
             FilterDialogScreen(
                 filterCategories = viewModel.filterCategories.getFilterCategories(),
                 onDismiss = { viewModel.setFilterDialogVisibilityTo(false) }

@@ -15,13 +15,12 @@ import kotlinx.coroutines.flow.stateIn
 
 class SpellsScreenViewModel(spellsApi: SpellsApi = SpellsFirebaseApi()) : ViewModel() {
 
-    // TODO find a better name for this. Something like SpellsFetchedState maybe?
-    enum class AllSpellsState {
+    enum class SpellsFetchedState {
         LOADING, LOADED, ERROR
     }
 
-    private val _allSpellsState = MutableStateFlow(AllSpellsState.LOADING)
-    val allSpellsState = _allSpellsState.asStateFlow()
+    private val _spellsFetchedState = MutableStateFlow(SpellsFetchedState.LOADING)
+    val spellsFetchedState = _spellsFetchedState.asStateFlow()
 
     private val _allSpells = MutableStateFlow(emptyList<Spell>())
 
@@ -48,11 +47,11 @@ class SpellsScreenViewModel(spellsApi: SpellsApi = SpellsFirebaseApi()) : ViewMo
     init {
         spellsApi.getSpells {
             if (it == null) {
-                _allSpellsState.value = AllSpellsState.ERROR
+                _spellsFetchedState.value = SpellsFetchedState.ERROR
             } else {
                 oldFilteredSpells = it
                 _allSpells.value = it
-                _allSpellsState.value = AllSpellsState.LOADED
+                _spellsFetchedState.value = SpellsFetchedState.LOADED
             }
         }
     }

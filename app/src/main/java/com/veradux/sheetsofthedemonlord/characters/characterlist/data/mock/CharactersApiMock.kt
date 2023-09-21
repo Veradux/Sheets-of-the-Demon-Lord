@@ -6,6 +6,7 @@ import com.veradux.sheetsofthedemonlord.characters.characterlist.model.NovicePat
 
 class CharactersApiMock : CharactersApi {
 
+    // TODO impl a local resources version of this. The characters should be saved locally for each user.
     override fun getCharacters(): List<DemonLordCharacter> {
         return listOf(
             DemonLordCharacter(name = "Sock", level = 1, ancestryName = "Goblin", novicePath = NovicePath.Rogue),

@@ -43,7 +43,7 @@ class FilterCategory(
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun FilterCategory(category: FilterCategory) {
-    Column {
+    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Row {
             Icon(category.icon, contentDescription = null, modifier = Modifier.align(Alignment.CenterVertically))
             Text(

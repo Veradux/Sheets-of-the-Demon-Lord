@@ -35,6 +35,7 @@ import kotlin.math.roundToInt
 fun ScreenWithScrollableTopBar(
     topBarHeight: Dp,
     topBar: @Composable (BoxScope.(IntOffset) -> Unit),
+    isScrollabilityActive: Boolean = true,
     content: @Composable (BoxScope.(PaddingValues) -> Unit)
 ) {
     val searchBarHeightPx = with(LocalDensity.current) { topBarHeight.roundToPx().toFloat() }
@@ -54,9 +55,9 @@ fun ScreenWithScrollableTopBar(
             .fillMaxSize()
             .nestedScroll(nestedScrollConnection)
     ) {
-
         content(PaddingValues(top = topBarHeight))
-        topBar(IntOffset(x = 0, y = searchBarOffsetHeightPx.value.roundToInt()))
+        val yOffset = if (isScrollabilityActive) searchBarOffsetHeightPx.value.roundToInt() else 0
+        topBar(IntOffset(x = 0, y = yOffset))
     }
 }
 

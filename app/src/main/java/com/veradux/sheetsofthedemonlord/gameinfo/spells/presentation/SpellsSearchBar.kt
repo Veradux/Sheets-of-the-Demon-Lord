@@ -58,8 +58,7 @@ fun SpellsSearchBar(
             Text(
                 text = stringResource(R.string.x_spells_found, spells.count()),
                 modifier = Modifier
-                    // TODO add vertical padding.
-                    .padding(horizontal = 24.dp)
+                    .padding(horizontal = 24.dp, vertical = 4.dp)
                     .align(Alignment.End)
             )
             LazyColumn {
