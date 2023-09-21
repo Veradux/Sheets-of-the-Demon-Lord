@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 
 class SpellsScreenViewModel(spellsApi: SpellsApi = SpellsFirebaseApi()) : ViewModel() {
@@ -32,24 +33,18 @@ class SpellsScreenViewModel(spellsApi: SpellsApi = SpellsFirebaseApi()) : ViewMo
 
     val filterCategories = SpellFilterCategories()
 
-    private var oldFilteredSpells = emptyList<Spell>()
     val filteredSpells: StateFlow<List<Spell>> =
-        combine(searchQuery, _allSpells, isFilterDialogOpen) { query, spells, isDialogOpen ->
-            if (!isDialogOpen) {
-                oldFilteredSpells = spells.filter { it.containsText(query) && filterCategories.filter(it) }
-            }
-            // TODO despite the result on the screen not changing,
-            //  this still triggers a recomposition of the whole screen by setting a value to filteredSpells.
-            //  Find a way to avoid this.
-            oldFilteredSpells
-        }.stateIn(viewModelScope, SharingStarted.Lazily, oldFilteredSpells)
+        isFilterDialogOpen
+            .filter { !it }
+            .combine(_allSpells) { _, spells -> spells.filter { filterCategories.filter(it) } }
+            .combine(searchQuery) { spells, query -> spells.filter { it.containsText(query) } }
+            .stateIn(viewModelScope, SharingStarted.Lazily, _allSpells.value)
 
     init {
         spellsApi.getSpells {
             if (it == null) {
                 _spellsFetchedState.value = SpellsFetchedState.ERROR
             } else {
-                oldFilteredSpells = it
                 _allSpells.value = it
                 _spellsFetchedState.value = SpellsFetchedState.LOADED
             }

@@ -3,10 +3,11 @@ package com.veradux.sheetsofthedemonlord.characters.charactercreation.data.mock
 import com.veradux.sheetsofthedemonlord.characters.charactercreation.data.CharacterCreationApi
 import com.veradux.sheetsofthedemonlord.characters.charactercreation.model.Ancestry
 
-// TODO maybe instead of having all game info loaded into the app and returning objects,
-//  we can store it as json and read it only when necessary
 class CharacterCreationApiMock : CharacterCreationApi {
 
+    // TODO instead of having all game info loaded in the app,
+    //  use this api to upload the ancestries to firebase and check how it looks as a json.
+    //  Then once it's good, remove these objects and read them from firebase instead.
     override fun getAncestries(): List<Ancestry> {
         return listOf(human, goblin)
     }
