@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.SheetsOfTheDemonLord" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.SheetsOfTheDemonLord" parent="android:Theme.Material.NoActionBar" />
+
+    <style name="Theme.DemonLordSplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.SheetsOfTheDemonLord</item>
+    </style>
 </resources>
